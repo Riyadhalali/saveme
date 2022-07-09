@@ -3,6 +3,8 @@ import 'package:saveme/services/sharedpreferences.dart';
 import 'package:saveme/widgets/textinputfield.dart';
 import 'package:saveme/widgets/textinputfieldwithicon.dart';
 
+import '../register/register.dart';
+
 class SignIn extends StatefulWidget {
   static const id = 'sign_in';
 
@@ -131,8 +133,7 @@ class _SignInState extends State<SignIn> {
         Container(
           child: FlatButton(
             onPressed: () {
-              //TODO: go to registeration page
-              //   Navigator.pushNamed(context, RegisterPage.id);
+              Navigator.pushNamed(context, RegisterPage.id);
             },
             child: Text(
               'التسجيل',
