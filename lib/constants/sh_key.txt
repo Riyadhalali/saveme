@@ -1,0 +1,9 @@
+> Task :app:signingReport
+Variant: debug
+Config: debug
+Store: C:\Users\RIYAD\.android\debug.keystore
+Alias: AndroidDebugKey
+MD5: 0A:CA:E7:87:8B:F0:FB:A2:68:13:69:31:6C:35:AB:F2
+SHA1: 11:C1:88:06:9E:FB:B9:01:B2:B7:F6:DD:C9:AD:B4:12:0A:68:6B:A4
+SHA-256: 7F:6C:D9:B4:99:08:76:2D:59:46:2B:3F:A8:6A:3A:2B:91:D1:1E:BD:C3:07:D4:CF:C6:F4:B2:E2:8F:90:E2:33
+Valid until: Friday, March 15, 2052

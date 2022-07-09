@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "80385343682",
+    "project_id": "saveme-ac592",
+    "storage_bucket": "saveme-ac592.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:80385343682:android:c70d0c469ce331d206fb5b",
+        "android_client_info": {
+          "package_name": "com.example.saveme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "80385343682-pe3o548i3qdtovh8rcrc3b5ga195aejo.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.saveme",
+            "certificate_hash": "11c188069efbb901b2b7f6ddc9adb4120a686ba4"
+          }
+        },
+        {
+          "client_id": "80385343682-a90pagaco5jt8mr8solnug707in0tb92.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6kWXkDqHp3AzDeUGSCwJvqaLgMAD76jY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "80385343682-a90pagaco5jt8mr8solnug707in0tb92.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
