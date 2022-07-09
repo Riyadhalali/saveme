@@ -36,6 +36,8 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/icon/
+    - assets/screens/signin/
+    - assets/screens/register/
   fonts:
     - family: OoohBaby
       fonts:

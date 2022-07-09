@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:saveme/widgets/mywidgets.dart';
 import 'package:saveme/widgets/textinputfield.dart';
 
 import '../sign_in/sign_in.dart';
@@ -25,10 +26,55 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _validateUsername = false;
   bool _validatePassword = false;
   bool _validatePhone = false;
+  MyWidgets myWidgets = new MyWidgets();
+
+  Future<void> login() async {
+    //- To check the user already entered username and password
+    setState(() {
+      _usernameController.text.isEmpty ? _validateUsername = true : _validateUsername = false;
+
+      _passwordController.text.isEmpty ? _validatePassword = true : _validatePassword = false;
+
+      _phoneController.text.isEmpty ? _validatePhone = true : _validatePhone = false;
+    });
+
+    //  if user didn't enter username or password or phone keep inside
+    if (_validateUsername || _validatePassword || _validatePhone) {
+      return;
+    }
+    // -> show progress bar if user already entered the required data
+    myWidgets.showProcessingDialog("جاري التسجيل ...", context);
+
+    //-> create user in firebase
+    try {
+      await firebaseAuth.createUserWithEmailAndPassword(
+          email: _usernameController.text.toLowerCase().trim(),
+          password: _passwordController.text.toLowerCase().trim());
+      //-> Display snackbar message
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("تم التسجيل بنجاح"),
+          duration: Duration(seconds: 3),
+        ),
+      );
+      Navigator.pushNamed(context, SignIn.id);
+    } on FirebaseAuthException catch (e) {
+      //-> Display snackbar message with error
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.message.toString()),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    }
+  } // enc function
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       key: _scaffoldKey,
       body: columnElements(),
     );
@@ -54,10 +100,10 @@ class _RegisterPageState extends State<RegisterPage> {
       child: Container(
         alignment: Alignment.center,
         width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height * 0.3,
+        height: MediaQuery.of(context).size.height * 0.4,
         decoration: BoxDecoration(
           image: DecorationImage(
-              image: AssetImage('assets/screen/icon/icon.png'), fit: BoxFit.contain),
+              image: AssetImage('assets/screens/register/register.jpg'), fit: BoxFit.contain),
         ),
       ),
     );
@@ -70,7 +116,7 @@ class _RegisterPageState extends State<RegisterPage> {
       padding: EdgeInsets.only(right: 55.0, left: 55.0),
       width: MediaQuery.of(context).size.width,
       child: RaisedButton(
-        color: Colors.red,
+        color: Colors.blue,
         child: Text(
           "تسجيل",
           style: TextStyle(fontSize: 20.0, color: Colors.white),
@@ -81,43 +127,7 @@ class _RegisterPageState extends State<RegisterPage> {
             color: Colors.blueAccent,
           ),
         ),
-        onPressed: () async {
-          //- To check the user already entered username and password
-          setState(() {
-            _usernameController.text.isEmpty ? _validateUsername = true : _validateUsername = false;
-
-            _passwordController.text.isEmpty ? _validatePassword = true : _validatePassword = false;
-
-            _phoneController.text.isEmpty ? _validatePhone = true : _validatePhone = false;
-          });
-
-          //  if user didn't enter username or password or phone keep inside
-          if (_validateUsername || _validatePassword || _validatePhone) {
-            return;
-          }
-          // -> show progress bar if user already entered the required data
-          setState(() {
-            _saving = true;
-          });
-          //-> create user in firebase
-          firebaseAuth.createUserWithEmailAndPassword(
-              email: _usernameController.text.toLowerCase().trim(),
-              password: _passwordController.text.toLowerCase().trim());
-
-          // data finished
-          setState(() {
-            _saving = false;
-          });
-
-          //-> Display snackbar message
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("تم التسجيل بنجاح"),
-              duration: Duration(seconds: 3),
-            ),
-          );
-          Navigator.pushNamed(context, SignIn.id);
-        },
+        onPressed: login,
       ),
     );
   }
@@ -174,16 +184,6 @@ class _RegisterPageState extends State<RegisterPage> {
             ),
             Row(
               children: [
-                // Container(
-                //   padding: EdgeInsets.only(left: 50.0, right: 50.0),
-                //   child: Text(
-                //     "ذكر",
-                //     style: TextStyle(
-                //         fontSize: 20.0,
-                //         fontWeight: FontWeight.bold,
-                //         color: Colors.black38),
-                //   ),
-                // ),
                 SizedBox(
                   width: 20.0,
                 ),
@@ -199,4 +199,3 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   }
 } // end class
-//TODO: 1- change the slide imageBackground, 2- make sign in just using email and password without phone

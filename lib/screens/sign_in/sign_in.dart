@@ -75,10 +75,10 @@ class _SignInState extends State<SignIn> {
       child: Container(
         alignment: Alignment.center,
         width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height * 0.4,
+        height: MediaQuery.of(context).size.height * 0.5,
         decoration: BoxDecoration(
           image: DecorationImage(
-              image: AssetImage('assets/ui/home/slide_9.jpeg'), fit: BoxFit.contain),
+              image: AssetImage('assets/screens/signin/signin2.jpeg'), fit: BoxFit.contain),
         ),
       ),
     );
@@ -91,7 +91,7 @@ class _SignInState extends State<SignIn> {
       padding: EdgeInsets.only(right: 55.0, left: 55.0),
       width: MediaQuery.of(context).size.width,
       child: RaisedButton(
-        color: Colors.red,
+        color: Colors.blue,
         child: Text(
           "تسجيل الدخول",
           style: TextStyle(fontSize: 20.0, color: Colors.white),
@@ -99,7 +99,7 @@ class _SignInState extends State<SignIn> {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(18.0),
           side: BorderSide(
-            color: Colors.red,
+            color: Colors.blue,
           ),
         ),
         onPressed: signInFunction,
@@ -137,7 +137,7 @@ class _SignInState extends State<SignIn> {
             },
             child: Text(
               'التسجيل',
-              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+              style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold),
             ),
           ),
         ),
