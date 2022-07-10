@@ -14,7 +14,7 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  final _usernameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _phoneController = TextEditingController();
 
@@ -31,7 +31,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Future<void> login() async {
     //- To check the user already entered username and password
     setState(() {
-      _usernameController.text.isEmpty ? _validateUsername = true : _validateUsername = false;
+      _emailController.text.isEmpty ? _validateUsername = true : _validateUsername = false;
 
       _passwordController.text.isEmpty ? _validatePassword = true : _validatePassword = false;
 
@@ -48,7 +48,7 @@ class _RegisterPageState extends State<RegisterPage> {
     //-> create user in firebase
     try {
       await firebaseAuth.createUserWithEmailAndPassword(
-          email: _usernameController.text.toLowerCase().trim(),
+          email: _emailController.text.toLowerCase().trim(),
           password: _passwordController.text.toLowerCase().trim());
       //-> Display snackbar message
       Navigator.pop(context);
@@ -156,8 +156,8 @@ class _RegisterPageState extends State<RegisterPage> {
               height: 4.0,
             ),
             TextInputField(
-              hint_text: "اسم المستخدم",
-              controller_text: _usernameController,
+              hint_text: "عنوان البريد الإلكتروني",
+              controller_text: _emailController,
               show_password: false,
               error_msg: _validateUsername ? "يرجى تعبئة الحقل" : " ",
             ),
