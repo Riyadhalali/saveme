@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:saveme/screens/home_screen/home_screen.dart';
 import 'package:saveme/screens/register/register.dart';
 import 'package:saveme/screens/sign_in/sign_in.dart';
 import 'package:saveme/screens/splash_screen/splash_screen.dart';
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
         SplashScreen.id: (context) => SplashScreen(),
         SignIn.id: (context) => SignIn(),
         RegisterPage.id: (context) => RegisterPage(),
+        HomeScreen.id: (context) => HomeScreen(),
       },
     );
   }

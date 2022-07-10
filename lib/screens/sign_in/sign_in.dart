@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:saveme/screens/home_screen/home_screen.dart';
 import 'package:saveme/services/sharedpreferences.dart';
+import 'package:saveme/widgets/mywidgets.dart';
 import 'package:saveme/widgets/textinputfield.dart';
 import 'package:saveme/widgets/textinputfieldwithicon.dart';
 
@@ -14,26 +17,31 @@ class SignIn extends StatefulWidget {
 
 class _SignInState extends State<SignIn> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  late String phone_data, password_data; //variables for holding shared pref data
+  late String email_data, password_data, uid_data; //variables for holding shared pref data
   late String usernameData; // this variable to store data returned from getUserInfo Api
   late String userPhoneData; // this variable to store data returned from getUserInfo Api
   late String userGenderData; // this variable to store data returned from getUserInfo Api
-  final _phonecontroller = TextEditingController();
+  final _emailcontroller = TextEditingController();
   final _passwordcontroller = TextEditingController();
 
-  bool validatePhone = false;
+  bool validateEmail = false;
   bool validatePassword = false;
   bool _isHidden = false;
 
   SharedPref sharedPref = new SharedPref();
+  FirebaseAuth firebaseAuth = FirebaseAuth.instance; // add firebase auth
+  MyWidgets myWidgets = new MyWidgets();
+  bool emailValid = false;
+
   //------------------------------Functions-------------------------------------
   //-> Loading User Data if he is already signed in to the program
   Future loadUserDataLogin() async {
-    phone_data = await sharedPref.LoadData("phone");
+    email_data = await sharedPref.LoadData("phone");
     password_data = await sharedPref.LoadData('password');
-    if (phone_data != null && password_data != null) {
+    uid_data = await sharedPref.LoadData("uid");
+    if (email_data != null && password_data != null) {
       setState(() {
-        _phonecontroller.text = phone_data;
+        _emailcontroller.text = email_data;
         _passwordcontroller.text = password_data;
       });
     }
@@ -170,9 +178,9 @@ class _SignInState extends State<SignIn> {
               height: 2.0,
             ),
             TextInputField(
-              hint_text: "رقم الهاتف",
+              hint_text: "عنوان البريد الإلكتروني",
               //label_text: "username",
-              controller_text: _phonecontroller,
+              controller_text: _emailcontroller,
               show_password: false,
               error_msg: validatePassword ? "يرجى تعبئة الحقل" : "",
               FunctionToDo: () {},
@@ -216,34 +224,57 @@ class _SignInState extends State<SignIn> {
 
 //------------------------------------------------------------------------------
 //-----------------------------------Functions----------------------------------
-  void signInFunction() {
+  void signInFunction() async {
     setState(() {
-      _phonecontroller.text.isEmpty ? validatePhone = true : validatePhone = false;
+      _emailcontroller.text.isEmpty ? validateEmail = true : validateEmail = false;
 
       _passwordcontroller.text.isEmpty ? validatePassword = true : validatePassword = false;
     });
 
-    if (validatePhone || validatePassword) {
+    if (validateEmail || validatePassword) {
+      return;
+    }
+    // to check that user has entered a valid email address
+    emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+        .hasMatch(_emailcontroller.text);
+    if (emailValid != true) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("البريد الإلكتروني غير صالح"),
+          duration: Duration(seconds: 3),
+        ),
+      );
       return;
     }
 
-    sharedPref.setData('phone', _phonecontroller.text);
+    sharedPref.setData('email', _emailcontroller.text);
     sharedPref.setData('password', _passwordcontroller.text);
     // show a snackbar message
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(
-        "تم تسجيل الدخول بنجاح",
-        style: TextStyle(
-          color: Colors.black,
-        ),
-        textAlign: TextAlign.center,
-      ),
-      duration: Duration(seconds: 3),
-      backgroundColor: Colors.white,
-    ));
 
-    // Navigator.pushNamed(context, Navigations.id);
+    myWidgets.showProcessingDialog(" جاري تسجيل الدخول ... ", context);
+
+    try {
+      UserCredential userCredential = await firebaseAuth.signInWithEmailAndPassword(
+          email: _emailcontroller.text.toLowerCase().trim(),
+          password: _passwordcontroller.text.toLowerCase().trim());
+      final user = userCredential.user;
+      // print(user?.uid);
+      if (user?.uid != null) {
+        Navigator.of(context).pop();
+        sharedPref.setData("uid", user!.uid.toString());
+        Navigator.of(context).pushNamed(HomeScreen.id);
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        myWidgets.displaySnackMessage(" لا يوجد مستخدم بهذا الاسم", context);
+      } else if (e.code == 'wrong-password') {
+        myWidgets.displaySnackMessage("كلمة السر خاطئة", context);
+      }
+
+      Navigator.of(context).pop();
+    }
   }
 //------------------------------------------------------------------------------
 
 } // end class
+//TODO: when can add strem builder or user then. for future call to show the error

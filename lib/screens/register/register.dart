@@ -26,6 +26,7 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _validateUsername = false;
   bool _validatePassword = false;
   bool _validatePhone = false;
+  bool emailValid = false; // to check if user has entered a valid email address
   MyWidgets myWidgets = new MyWidgets();
 
   Future<void> login() async {
@@ -42,6 +43,20 @@ class _RegisterPageState extends State<RegisterPage> {
     if (_validateUsername || _validatePassword || _validatePhone) {
       return;
     }
+
+    emailValid = RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+        .hasMatch(_emailController.text);
+
+    if (emailValid != true) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("البريد الإلكتروني غير صالح"),
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return ;
+    }
+
     // -> show progress bar if user already entered the required data
     myWidgets.showProcessingDialog("جاري التسجيل ...", context);
 
@@ -70,6 +85,11 @@ class _RegisterPageState extends State<RegisterPage> {
       );
     }
   } // enc function
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
