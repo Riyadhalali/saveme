@@ -2,7 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:saveme/navigator.dart';
 import 'package:saveme/screens/home_screen/home_screen.dart';
-import 'package:saveme/screens/maps/maps.dart';
+import 'package:saveme/screens/maps/maps_search_screen.dart';
+import 'package:saveme/screens/maps/maps_shortest_path.dart';
 import 'package:saveme/screens/register/register.dart';
 import 'package:saveme/screens/sign_in/sign_in.dart';
 
@@ -21,20 +22,20 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      initialRoute: SplashScreen.id,
-      debugShowCheckedModeBanner: false,
-      routes: {
-        SplashScreen.id: (context) => SplashScreen(),
-        SignIn.id: (context) => SignIn(),
-        RegisterPage.id: (context) => RegisterPage(),
-        HomeScreen.id: (context) => HomeScreen(),
-        Navigations.id: (context) => Navigations(),
-        MapsPage.id: (context) => MapsPage(),
-      },
-    );
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        initialRoute: SplashScreen.id,
+        debugShowCheckedModeBanner: false,
+        routes: {
+          SplashScreen.id: (context) => SplashScreen(),
+          SignIn.id: (context) => SignIn(),
+          RegisterPage.id: (context) => RegisterPage(),
+          HomeScreen.id: (context) => HomeScreen(),
+          Navigations.id: (context) => Navigations(),
+          MapsPageShortestPlace.id: (context) => MapsPageShortestPlace(), // shortest path
+          MapsSearchScreen.id: (context) => MapsSearchScreen(),
+        });
   }
 }
