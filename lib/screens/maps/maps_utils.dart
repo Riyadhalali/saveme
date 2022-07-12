@@ -14,7 +14,7 @@ class MapUtils {
         if (latLng.longitude < y0!) y0 = latLng.longitude;
       }
     }
-    return LatLngBounds(northeast: LatLng(x1! + 1, y1! + 1), southwest: LatLng(x0! - 1, y0! - 1));
+    return LatLngBounds(northeast: LatLng(x1!, y1!), southwest: LatLng(x0!, y0!));
   }
 }
 

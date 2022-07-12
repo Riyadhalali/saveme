@@ -9,15 +9,15 @@ import 'package:saveme/webservices/webservices.dart';
 const LatLng SOURCE_LOCATION = LatLng(35.1367571, 36.787285); // المنطقة الصناعية - حماه
 const LatLng DEST_LOCATION = LatLng(35.11274331472979, 36.75788764136045); // المشفى الوطني حماه
 
-class MapsPageShortestPlace extends StatefulWidget {
-  const MapsPageShortestPlace({Key? key}) : super(key: key);
+class MapsPageShortestPath extends StatefulWidget {
+  const MapsPageShortestPath({Key? key}) : super(key: key);
   static const id = 'maps_shortest_path_page';
 
   @override
-  _MapsPageShortestPlaceState createState() => _MapsPageShortestPlaceState();
+  _MapsPageShortestPathState createState() => _MapsPageShortestPathState();
 }
 
-class _MapsPageShortestPlaceState extends State<MapsPageShortestPlace> {
+class _MapsPageShortestPathState extends State<MapsPageShortestPath> {
   Completer<GoogleMapController> _controller = Completer();
   double? lat;
   double? long;

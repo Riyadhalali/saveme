@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_place/google_place.dart';
-import 'package:saveme/screens/maps/maps_places.dart';
+import 'package:saveme/screens/maps/maps_places_by_search.dart';
 
 class MapsSearchScreen extends StatefulWidget {
   static const id = 'maps_search_screen';
@@ -15,7 +15,7 @@ class _MapsSearchScreenState extends State<MapsSearchScreen> {
   late GooglePlace googlePlace;
   final _startSearchFieldController = TextEditingController();
   final _endSearchFieldController = TextEditingController();
-  List<AutocompletePrediction> predictions = []; // create an empty list
+  List<AutocompletePrediction> predictions = []; // create an empty list for holding results
   DetailsResult? startPosition;
   DetailsResult? endPosition;
   late FocusNode startFocusNode;
@@ -24,6 +24,8 @@ class _MapsSearchScreenState extends State<MapsSearchScreen> {
   late LatLng destinationLocation;
   double? lat;
   double? long;
+
+  // get location of device
 
   void getLocation() async {
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
@@ -42,6 +44,7 @@ class _MapsSearchScreenState extends State<MapsSearchScreen> {
   @override
   void initState() {
     super.initState();
+    getLocation();
     String kGoogleApiKey = "AIzaSyA54WuN4cuPPdhHB5hW-ibaYJGF7ZB_1mE"; // google api keys
     googlePlace = GooglePlace(kGoogleApiKey);
     startFocusNode = FocusNode();
@@ -60,7 +63,7 @@ class _MapsSearchScreenState extends State<MapsSearchScreen> {
     var results = await googlePlace.autocomplete.get(value);
     if (results != null && results.predictions != null && mounted) {
       setState(() {
-        print(results.predictions!.first.description);
+        // print(results.predictions!.first.description);
         predictions = results.predictions!; // to make sure it is not null
       });
     }
@@ -134,7 +137,9 @@ class _MapsSearchScreenState extends State<MapsSearchScreen> {
                     ),
                     title: Text(predictions[index].description.toString()),
                     onTap: () async {
+                      // get the place id from the predictions
                       final placeID = predictions[index].placeId!;
+                      // pass the place id to get the details
                       final details = await googlePlace.details.get(placeID);
                       if (details != null && details.result != null && mounted) {
                         if (startFocusNode.hasFocus) {
@@ -155,9 +160,10 @@ class _MapsSearchScreenState extends State<MapsSearchScreen> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => MapsPlaces(
+                                  builder: (context) => MapsPlacesBySearch(
                                         startPosition: startPosition,
                                         endPosition: endPosition,
+                                        currentLocation: currentLocation,
                                       )));
                         }
                       }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:saveme/screens/maps/maps_nearby_places_screen.dart';
+import 'package:saveme/screens/maps/maps_shortest_path.dart';
 import 'package:saveme/widgets/mywidgets.dart';
 
 class DrawePage extends StatelessWidget {
@@ -16,25 +18,25 @@ class DrawePage extends StatelessWidget {
             child: Container(
               width: 100.0,
               decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage("assets/logo/logo.jpeg"), fit: BoxFit.contain),
+                image:
+                    DecorationImage(image: AssetImage("assets/icon/icon.png"), fit: BoxFit.contain),
               ),
             ),
           ),
-          ListTile(
-            leading: Icon(Icons.add),
-            title: Text('إضافة منشور'),
-            onTap: () {
-              //Navigator.pushNamed(context, AddPost.id);
-            },
-          ),
-          ListTile(
-            leading: Icon(Icons.app_registration),
-            title: Text('التسجيل على معونة'),
-            onTap: () {
-              //  Navigator.pushNamed(context, HelperKits.id);
-            },
-          ),
+          // ListTile(
+          //   leading: Icon(Icons.add),
+          //   title: Text('إضافة منشور'),
+          //   onTap: () {
+          //     //Navigator.pushNamed(context, AddPost.id);
+          //   },
+          // ),
+          // ListTile(
+          //   leading: Icon(Icons.app_registration),
+          //   title: Text('التسجيل على معونة'),
+          //   onTap: () {
+          //     //  Navigator.pushNamed(context, HelperKits.id);
+          //   },
+          // ),
           ListTile(
             leading: Icon(
               Icons.radio_button_on,
@@ -44,14 +46,15 @@ class DrawePage extends StatelessWidget {
               'طلب الإسعاف',
             ),
             onTap: () {
-              //  Navigator.pushNamed(context, EmergencyPage.id);
+              // go to the shortest path
+              Navigator.pushNamed(context, MapsPageShortestPath.id);
             },
           ),
           ListTile(
             leading: Icon(Icons.archive_rounded),
-            title: Text('باب التطوع'),
+            title: Text('الوصول إلى أقرب مشفى'),
             onTap: () {
-              //   Navigator.pushNamed(context, Voluntaries.id);
+              Navigator.pushNamed(context, MapsNearByPlacesScreen.id);
             },
           ),
           ListTile(

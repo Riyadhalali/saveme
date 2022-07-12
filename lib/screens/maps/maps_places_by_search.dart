@@ -5,18 +5,19 @@ import 'package:google_place/google_place.dart';
 
 import 'maps_utils.dart';
 
-class MapsPlaces extends StatefulWidget {
+class MapsPlacesBySearch extends StatefulWidget {
   static const id = 'maps_places';
   final DetailsResult? startPosition;
   final DetailsResult? endPosition;
+  final LatLng? currentLocation;
 
-  const MapsPlaces({this.startPosition, this.endPosition});
+  const MapsPlacesBySearch({this.startPosition, this.endPosition, this.currentLocation});
 
   @override
-  State<MapsPlaces> createState() => _MapsPlacesState();
+  State<MapsPlacesBySearch> createState() => _MapsPlacesBySearchState();
 }
 
-class _MapsPlacesState extends State<MapsPlaces> {
+class _MapsPlacesBySearchState extends State<MapsPlacesBySearch> {
   String kGoogleApiKey = "AIzaSyA54WuN4cuPPdhHB5hW-ibaYJGF7ZB_1mE"; // google api keys
   late CameraPosition _initalPosition;
   Map<PolylineId, Polyline> polylines = {};

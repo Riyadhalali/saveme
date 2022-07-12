@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:saveme/screens/sign_in/sign_in.dart';
 
 import '../../widgets/image_background.dart';
-import '../screens/maps/maps_search_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   static const String id = 'splash_screen';
@@ -18,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future onDoneLoading() async {
-    Navigator.pushNamed(context, MapsSearchScreen.id);
+    Navigator.pushNamed(context, SignIn.id);
   }
 
   @override
