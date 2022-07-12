@@ -58,12 +58,12 @@ class WebServices {
   //---------------------------------------------------------------------------------------------
   //-> display the first option
   static Future<Map<String, dynamic>> searchNearbyPlacesOnePlace(
-      String place, String Lat, String Lng, String apiKey, String raduis) async {
+      String place, String Lat, String Lng, String apiKey, String raduis, String type) async {
     var body;
     var placeFound;
     //  final NearbyPlacesModel nearbyPlacesModel;
     var url =
-        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=$place&location=$Lat%2C$Lng&radius=$raduis&type=hospital|pharmacy|doctor&key=$apiKey';
+        'https://maps.googleapis.com/maps/api/place/nearbysearch/json?keyword=$place&location=$Lat%2C$Lng&radius=$raduis&type=$type|pharmacy|doctor&key=$apiKey';
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:saveme/screens/maps/maps_nearby_places_screen.dart';
 import 'package:saveme/webservices/webservices.dart';
 
 class NearByPlaceScreen extends StatefulWidget {
@@ -31,17 +30,17 @@ class _NearByPlaceScreenState extends State<NearByPlaceScreen> {
     });
     // receive it as Map
     Map place = await WebServices.searchNearbyPlacesOnePlace(
-        "hospital", latitudeData.toString(), long.toString(), kGoogleApiKey, "1500");
+        "hospital", latitudeData.toString(), long.toString(), kGoogleApiKey, "1500", "hospital");
     setState(() {
       nearbyLocation = LatLng(place["lat"], place["lng"]);
     });
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => MapsNearByPlacesScreen(
-                  currentLocation: currentLocation,
-                  nearbyLocation: nearbyLocation,
-                )));
+    // Navigator.push(
+    //     context,
+    //     MaterialPageRoute(
+    //         builder: (context) => MapsNearByPlacesScreen(
+    //               currentLocation: currentLocation,
+    //               nearbyLocation: nearbyLocation,
+    //             )));
 
     print(place["lat"].toString());
     print(place["lng"].toString());

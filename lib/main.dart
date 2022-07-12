@@ -2,7 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:saveme/navigator.dart';
 import 'package:saveme/screens/home_screen/home_screen.dart';
-import 'package:saveme/screens/maps/maps_nearby_places.dart';
+import 'package:saveme/screens/maps/maps_nearby_places_screen.dart';
 import 'package:saveme/screens/maps/maps_search_screen.dart';
 import 'package:saveme/screens/maps/maps_shortest_path.dart';
 import 'package:saveme/screens/register/register.dart';
@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
           Navigations.id: (context) => Navigations(),
           MapsPageShortestPath.id: (context) => MapsPageShortestPath(), // shortest path
           MapsSearchScreen.id: (context) => MapsSearchScreen(),
-          NearByPlaceScreen.id: (context) => NearByPlaceScreen(),
+          MapsNearByPlacesScreen.id: (context) => MapsNearByPlacesScreen(),
         });
   }
 }

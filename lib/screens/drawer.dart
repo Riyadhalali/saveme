@@ -54,7 +54,39 @@ class DrawePage extends StatelessWidget {
             leading: Icon(Icons.archive_rounded),
             title: Text('الوصول إلى أقرب مشفى'),
             onTap: () {
-              Navigator.pushNamed(context, MapsNearByPlacesScreen.id);
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MapsNearByPlacesScreen(
+                            placetoSearch: "hospital",
+                            typetoSearch: "hospital",
+                          )));
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.archive_rounded),
+            title: Text('الوصول إلى أقرب عيادة طبيب'),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MapsNearByPlacesScreen(
+                            placetoSearch: "doctor",
+                            typetoSearch: "doctor",
+                          )));
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.archive_rounded),
+            title: Text('الوصول إلى أقرب صيدلية'),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MapsNearByPlacesScreen(
+                            placetoSearch: "pharmacy",
+                            typetoSearch: "pharmacy",
+                          )));
             },
           ),
           ListTile(

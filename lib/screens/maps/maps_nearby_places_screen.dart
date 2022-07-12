@@ -8,11 +8,11 @@ import 'maps_utils.dart';
 
 // this class is for showing the nearby places using polylines
 class MapsNearByPlacesScreen extends StatefulWidget {
-  static const id = 'maps_places';
-  final LatLng? nearbyLocation;
-  final LatLng? currentLocation;
+  static const id = 'maps_near_places_screen';
+  final String? placetoSearch;
+  final String? typetoSearch;
 
-  const MapsNearByPlacesScreen({this.nearbyLocation, this.currentLocation});
+  const MapsNearByPlacesScreen({this.placetoSearch, this.typetoSearch});
 
   @override
   State<MapsNearByPlacesScreen> createState() => _MapsNearByPlacesScreenState();
@@ -32,6 +32,7 @@ class _MapsNearByPlacesScreenState extends State<MapsNearByPlacesScreen> {
   double? long;
 
   void getPlace() async {
+    //-> first get location
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     double longitudeData = position.longitude;
     double latitudeData = position.latitude;
@@ -39,32 +40,27 @@ class _MapsNearByPlacesScreenState extends State<MapsNearByPlacesScreen> {
       lat = latitudeData;
       long = longitudeData;
       currentLocation = LatLng(position.latitude, position.longitude);
+      _initalPosition = CameraPosition(
+          target: LatLng(currentLocation.latitude, currentLocation.longitude), zoom: 14.4746);
       // destinationLocation = LatLng(DEST_LOCATION.latitude, DEST_LOCATION.longitude);
     });
-    // receive it as Map
+    // receive it as Map from webservices
     Map place = await WebServices.searchNearbyPlacesOnePlace(
-        "hospital", latitudeData.toString(), long.toString(), kGoogleApiKey, "1500");
+        widget.placetoSearch.toString(),
+        latitudeData.toString(),
+        long.toString(),
+        kGoogleApiKey,
+        "1500",
+        widget.typetoSearch.toString());
     setState(() {
       nearbyLocation = LatLng(place["lat"], place["lng"]);
     });
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => MapsNearByPlacesScreen(
-                  currentLocation: currentLocation,
-                  nearbyLocation: nearbyLocation,
-                )));
-
-    print(place["lat"].toString());
-    print(place["lng"].toString());
   }
 
   @override
   void initState() {
     super.initState();
-    _initalPosition = CameraPosition(
-        target: LatLng(widget.currentLocation!.latitude, widget.currentLocation!.longitude),
-        zoom: 14.4746);
+    getPlace();
   }
 
   _addPolyLine() {
@@ -78,9 +74,9 @@ class _MapsNearByPlacesScreenState extends State<MapsNearByPlacesScreen> {
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
         kGoogleApiKey,
         // current location
-        PointLatLng(widget.currentLocation!.latitude, widget.currentLocation!.longitude),
+        PointLatLng(currentLocation.latitude, currentLocation.longitude),
         // destination location
-        PointLatLng(widget.nearbyLocation!.latitude, widget.nearbyLocation!.longitude),
+        PointLatLng(nearbyLocation.latitude, nearbyLocation.longitude),
         travelMode: TravelMode.driving);
 
     if (result.points.isNotEmpty) {
@@ -96,43 +92,33 @@ class _MapsNearByPlacesScreenState extends State<MapsNearByPlacesScreen> {
     Set<Marker> _markers = {
       Marker(
         markerId: MarkerId('start'),
-        position: LatLng(widget.currentLocation!.latitude, widget.currentLocation!.longitude),
+        position: LatLng(currentLocation.latitude, currentLocation.longitude),
       ),
       Marker(
         markerId: MarkerId('end'),
-        position: LatLng(widget.nearbyLocation!.latitude, widget.nearbyLocation!.longitude),
+        position: LatLng(nearbyLocation.latitude, nearbyLocation.longitude),
       )
     };
 
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Colors.white,
-      //   elevation: 0,
-      //   leading: IconButton(
-      //     onPressed: () {
-      //       Navigator.of(context).pop();
-      //     },
-      //     icon: CircleAvatar(
-      //       backgroundColor: Colors.white,
-      //       child: Icon(
-      //         Icons.arrow_back,
-      //         color: Colors.black,
-      //       ),
-      //     ),
-      //   ),
-      // ),
-      body: GoogleMap(
-        initialCameraPosition: _initalPosition,
-        markers: Set.from(_markers),
-        onMapCreated: (GoogleMapController controller) {
-          Future.delayed(Duration(milliseconds: 2000), () {
-            controller.animateCamera(CameraUpdate.newLatLngBounds(
-                MapUtils.boundsFromLatLngList(_markers.map((loc) => loc.position).toList()), 1));
-          });
-          _getPolyline();
-        },
-        polylines: Set<Polyline>.of(polylines.values),
-      ),
-    );
+        body: Scaffold(
+      body: lat == null || long == null
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : GoogleMap(
+              initialCameraPosition: _initalPosition,
+              markers: Set.from(_markers),
+              onMapCreated: (GoogleMapController controller) {
+                Future.delayed(Duration(milliseconds: 2000), () {
+                  controller.animateCamera(CameraUpdate.newLatLngBounds(
+                      MapUtils.boundsFromLatLngList(_markers.map((loc) => loc.position).toList()),
+                      1));
+                });
+                _getPolyline();
+              },
+              polylines: Set<Polyline>.of(polylines.values),
+            ),
+    ));
   }
 }
