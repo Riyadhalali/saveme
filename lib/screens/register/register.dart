@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:saveme/widgets/mywidgets.dart';
@@ -17,6 +18,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _nameController = TextEditingController();
 
   //-> add firebase auth
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
@@ -26,6 +28,7 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _validateUsername = false;
   bool _validatePassword = false;
   bool _validatePhone = false;
+  bool _validateName = false;
   bool emailValid = false; // to check if user has entered a valid email address
   MyWidgets myWidgets = new MyWidgets();
 
@@ -37,10 +40,11 @@ class _RegisterPageState extends State<RegisterPage> {
       _passwordController.text.isEmpty ? _validatePassword = true : _validatePassword = false;
 
       _phoneController.text.isEmpty ? _validatePhone = true : _validatePhone = false;
+      _nameController.text.isEmpty ? _validateName = true : _validateName = false;
     });
 
     //  if user didn't enter username or password or phone keep inside
-    if (_validateUsername || _validatePassword || _validatePhone) {
+    if (_validateUsername || _validatePassword || _validatePhone || _validateName) {
       return;
     }
 
@@ -54,7 +58,7 @@ class _RegisterPageState extends State<RegisterPage> {
           duration: Duration(seconds: 3),
         ),
       );
-      return ;
+      return;
     }
 
     // -> show progress bar if user already entered the required data
@@ -65,6 +69,18 @@ class _RegisterPageState extends State<RegisterPage> {
       await firebaseAuth.createUserWithEmailAndPassword(
           email: _emailController.text.toLowerCase().trim(),
           password: _passwordController.text.toLowerCase().trim());
+
+      //-> get the uid from firebase for the user to save it in database
+      final User? user = firebaseAuth.currentUser;
+      final _uid = user!.uid;
+      //-? save it to users table in firestore
+      FirebaseFirestore.instance.collection('users').doc(_uid).set({
+        'id': _uid,
+        'name': _nameController.text,
+        'email': _emailController.text,
+        'phone_number': _phoneController.text
+      });
+
       //-> Display snackbar message
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -100,7 +116,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
   } // end build
 
-  //-------------------------------Column --------------------------------------
+  //------------------------------- Column --------------------------------------
   Widget columnElements() {
     return SafeArea(
       child: SingleChildScrollView(
@@ -171,6 +187,12 @@ class _RegisterPageState extends State<RegisterPage> {
             Text(
               "تسجيل",
               style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.black38),
+            ),
+            TextInputField(
+              hint_text: "اسم المستخدم",
+              controller_text: _nameController,
+              show_password: false,
+              error_msg: _validateName ? "يرجى تعبئة الحقل" : " ",
             ),
             SizedBox(
               height: 4.0,

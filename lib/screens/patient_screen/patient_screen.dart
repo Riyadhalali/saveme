@@ -13,7 +13,7 @@ class _PatientScreenState extends State<PatientScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: DrawePage(),
-      body: Text("صفحة المريض"),
+      body: SafeArea(child: Text("صفحة المريض")),
     );
   }
 }

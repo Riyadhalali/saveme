@@ -11,7 +11,8 @@ class _DoctorScreenState extends State<DoctorScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Text("صفحة الطبيب"),
+      drawer: Drawer(),
+      body: SafeArea(child: Text("صفحة الطبيب")),
     );
   }
 }

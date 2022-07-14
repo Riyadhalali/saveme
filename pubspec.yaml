@@ -26,6 +26,7 @@ dependencies:
   custom_info_window: ^1.0.1
   cloud_firestore: ^3.3.0
 
+
   cupertino_icons: ^1.0.2
 
 dev_dependencies:
@@ -49,6 +50,7 @@ flutter:
     - assets/icon/
     - assets/screens/signin/
     - assets/screens/register/
+    - assets/screens/add_post/
   fonts:
     - family: OoohBaby
       fonts:

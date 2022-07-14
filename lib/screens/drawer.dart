@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:saveme/screens/add_post_from_doctor/add_post_from_doctor.dart';
 import 'package:saveme/screens/maps/maps_nearby_places_screen.dart';
 import 'package:saveme/screens/maps/maps_shortest_path.dart';
 import 'package:saveme/widgets/mywidgets.dart';
@@ -23,20 +24,6 @@ class DrawePage extends StatelessWidget {
               ),
             ),
           ),
-          // ListTile(
-          //   leading: Icon(Icons.add),
-          //   title: Text('إضافة منشور'),
-          //   onTap: () {
-          //     //Navigator.pushNamed(context, AddPost.id);
-          //   },
-          // ),
-          // ListTile(
-          //   leading: Icon(Icons.app_registration),
-          //   title: Text('التسجيل على معونة'),
-          //   onTap: () {
-          //     //  Navigator.pushNamed(context, HelperKits.id);
-          //   },
-          // ),
           ListTile(
             leading: Icon(
               Icons.radio_button_on,
@@ -48,6 +35,19 @@ class DrawePage extends StatelessWidget {
             onTap: () {
               // go to the shortest path
               Navigator.pushNamed(context, MapsPageShortestPath.id);
+            },
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.add_box,
+              color: Colors.red,
+            ),
+            title: Text(
+              'إضافة عيادة طبيب',
+            ),
+            onTap: () {
+              // to add post from doctors
+              Navigator.pushNamed(context, AddPostsFromDoctor.id);
             },
           ),
           ListTile(

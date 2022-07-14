@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:saveme/screens/doctor_screen/doctor_screen.dart';
 
 import 'screens/patient_screen/patient_screen.dart';
 
@@ -22,8 +23,7 @@ class _NavigationsState extends State<Navigations> {
   //---------------------------List of Pages------------------------------------
   final List<Widget> _pages = [
     PatientScreen(),
-    // HelperKits(),
-    // Voluntaries(),
+    DoctorScreen(),
   ];
   //--------------------------On Tapped item-----------------------------------
   _onTapped(int index) {
@@ -56,9 +56,9 @@ class _NavigationsState extends State<Navigations> {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed, // to make it unsizable
         items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "الرئيسية"),
-          BottomNavigationBarItem(icon: Icon(Icons.car_rental), label: "معونات"),
-          BottomNavigationBarItem(icon: Icon(Icons.date_range), label: "التطوع"),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "صفحة المريض"),
+          BottomNavigationBarItem(icon: Icon(Icons.car_rental), label: "صفحة الطبيب"),
+          BottomNavigationBarItem(icon: Icon(Icons.date_range), label: "الاستشارات الطبية"),
         ],
         currentIndex: selectedPage,
         showUnselectedLabels: true,
