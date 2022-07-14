@@ -15,6 +15,7 @@ class _NearByPlaceScreenState extends State<NearByPlaceScreen> {
   String kGoogleApiKey = "AIzaSyA54WuN4cuPPdhHB5hW-ibaYJGF7ZB_1mE"; // google api keys
   late LatLng currentLocation;
   late LatLng nearbyLocation;
+  String? nearbyPlaceName;
   double? lat;
   double? long;
 
@@ -33,6 +34,8 @@ class _NearByPlaceScreenState extends State<NearByPlaceScreen> {
         "hospital", latitudeData.toString(), long.toString(), kGoogleApiKey, "1500", "hospital");
     setState(() {
       nearbyLocation = LatLng(place["lat"], place["lng"]);
+      nearbyPlaceName = place['name'];
+      print("the name of place is$nearbyPlaceName");
     });
     // Navigator.push(
     //     context,

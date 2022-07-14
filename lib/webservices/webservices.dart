@@ -71,8 +71,14 @@ class WebServices {
         var decodedData = jsonDecode(body); // decoding data
         var placeFoundLat = decodedData['results'][0]['geometry']['location']['lat'];
         var placeFoundLng = decodedData['results'][0]['geometry']['location']['lng'];
+        var placeFoundName = decodedData['results'][0]['name'];
+
         // var placeLocation = print("place that found is: $placeFoundLat,$placeFoundLng");
-        Map<String, dynamic> placeLocation = {"lat": placeFoundLat, "lng": placeFoundLng};
+        Map<String, dynamic> placeLocation = {
+          "lat": placeFoundLat,
+          "lng": placeFoundLng,
+          "name": placeFoundName
+        };
         return placeLocation;
       } else {
         throw Exception('error 1');

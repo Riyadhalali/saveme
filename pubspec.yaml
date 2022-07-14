@@ -23,6 +23,8 @@ dependencies:
   http: ^0.13.3
   google_maps_webservice: ^0.0.19
   google_place: ^0.4.7
+  custom_info_window: ^1.0.1
+  cloud_firestore: ^3.3.0
 
   cupertino_icons: ^1.0.2
 

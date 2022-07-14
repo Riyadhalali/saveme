@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:saveme/screens/home_screen/home_screen.dart';
+import 'package:saveme/screens/patient_screen/patient_screen.dart';
 import 'package:saveme/services/sharedpreferences.dart';
 import 'package:saveme/widgets/mywidgets.dart';
 import 'package:saveme/widgets/textinputfield.dart';
@@ -262,7 +262,7 @@ class _SignInState extends State<SignIn> {
       if (user?.uid != null) {
         Navigator.of(context).pop();
         sharedPref.setData("uid", user!.uid.toString());
-        Navigator.of(context).pushNamed(HomeScreen.id);
+        Navigator.of(context).pushNamed(PatientScreen.id);
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {

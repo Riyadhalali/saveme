@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:saveme/screens/maps/maps_utils.dart';
 import 'package:saveme/webservices/webservices.dart';
-
-import 'maps_utils.dart';
 
 // this class is for showing the nearby places using polylines
 class MapsNearByPlacesScreen extends StatefulWidget {
@@ -25,13 +24,16 @@ class _MapsNearByPlacesScreenState extends State<MapsNearByPlacesScreen> {
   List<LatLng> polylineCoordinates = [];
   PolylinePoints polylinePoints = PolylinePoints();
 
-//**************Variables for nearby place
+//**************Variables for nearby place***************************************
   late LatLng currentLocation;
   late LatLng nearbyLocation;
   double? lat;
   double? long;
+  double? nearbyLocationLat;
+  double? nearbyLocationLtn;
+  String? nearbyPlaceName;
 
-  void getPlace() async {
+  Future<dynamic> getPlace() async {
     //-> first get location
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     double longitudeData = position.longitude;
@@ -50,10 +52,11 @@ class _MapsNearByPlacesScreenState extends State<MapsNearByPlacesScreen> {
         latitudeData.toString(),
         long.toString(),
         kGoogleApiKey,
-        "1500",
+        "500",
         widget.typetoSearch.toString());
     setState(() {
       nearbyLocation = LatLng(place["lat"], place["lng"]);
+      nearbyPlaceName = place['name'];
     });
   }
 
@@ -91,18 +94,19 @@ class _MapsNearByPlacesScreenState extends State<MapsNearByPlacesScreen> {
   Widget build(BuildContext context) {
     Set<Marker> _markers = {
       Marker(
+        infoWindow: InfoWindow(title: "موقعك الحالي"),
         markerId: MarkerId('start'),
         position: LatLng(currentLocation.latitude, currentLocation.longitude),
       ),
       Marker(
+        infoWindow: InfoWindow(title: nearbyPlaceName.toString()),
         markerId: MarkerId('end'),
         position: LatLng(nearbyLocation.latitude, nearbyLocation.longitude),
       )
     };
 
     return Scaffold(
-        body: Scaffold(
-      body: lat == null || long == null
+      body: long == null || lat == null
           ? Center(
               child: CircularProgressIndicator(),
             )
@@ -119,6 +123,6 @@ class _MapsNearByPlacesScreenState extends State<MapsNearByPlacesScreen> {
               },
               polylines: Set<Polyline>.of(polylines.values),
             ),
-    ));
+    );
   }
 }

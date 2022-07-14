@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:saveme/screens/home_screen/home_screen.dart';
+
+import 'screens/patient_screen/patient_screen.dart';
 
 class Navigations extends StatefulWidget {
   static const String id = 'navigations';
@@ -20,7 +21,7 @@ class _NavigationsState extends State<Navigations> {
 
   //---------------------------List of Pages------------------------------------
   final List<Widget> _pages = [
-    HomeScreen(),
+    PatientScreen(),
     // HelperKits(),
     // Voluntaries(),
   ];
@@ -44,6 +45,7 @@ class _NavigationsState extends State<Navigations> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(),
       body: PageView(
         children: _pages,
         physics: NeverScrollableScrollPhysics(),
