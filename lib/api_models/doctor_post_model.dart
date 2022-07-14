@@ -25,4 +25,12 @@ class DoctorPosts {
         'doctorPhone': doctorPhone,
         'doctorEmail': doctorEmail
       };
+
+  static DoctorPosts fromJson(Map<String, dynamic> json) => DoctorPosts(
+      doctorName: json['doctorName'],
+      doctorType: json['doctorType'],
+      openingTime: json['openingTime'],
+      doctorLocation: json['doctorLocation'],
+      doctorPhone: json['doctorPhone'],
+      doctorEmail: json['doctorEmail']);
 }

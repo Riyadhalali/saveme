@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:saveme/screens/add_post_from_doctor/add_post_from_doctor.dart';
+import 'package:saveme/doctor_services/doctor_services.dart';
 
 import '../../widgets/image_background.dart';
 
@@ -18,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future onDoneLoading() async {
-    Navigator.pushNamed(context, AddPostsFromDoctor.id);
+    Navigator.pushNamed(context, DoctorServices.id);
   }
 
   @override

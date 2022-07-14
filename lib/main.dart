@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:saveme/doctor_services/doctor_services.dart';
 import 'package:saveme/navigator.dart';
 import 'package:saveme/screens/add_post_from_doctor/add_post_from_doctor.dart';
 import 'package:saveme/screens/doctor_screen/doctor_screen.dart';
@@ -42,6 +43,7 @@ class MyApp extends StatelessWidget {
           MapsSearchScreen.id: (context) => MapsSearchScreen(),
           MapsNearByPlacesScreen.id: (context) => MapsNearByPlacesScreen(),
           AddPostsFromDoctor.id: (context) => AddPostsFromDoctor(),
+          DoctorServices.id: (context) => DoctorServices(),
         });
   }
 }
