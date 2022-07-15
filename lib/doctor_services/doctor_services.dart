@@ -18,6 +18,10 @@ class _DoctorServicesState extends State<DoctorServices> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text("قائمة الأطباء"),
+        backgroundColor: Colors.deepOrange,
+      ),
       body: StreamBuilder<List<DoctorPosts>>(
         stream: readPosts(),
         builder: (context, snapshot) {
@@ -37,10 +41,61 @@ class _DoctorServicesState extends State<DoctorServices> {
     );
   }
 
-  Widget buildPosts(DoctorPosts doctorPosts) => ListTile(
-        leading: CircleAvatar(
-          child: Text(doctorPosts.doctorName),
+  Widget buildPosts(DoctorPosts doctorPosts) => Card(
+        child: ListTile(
+          leading: CircleAvatar(child: Text(doctorPosts.doctorName)),
+          title: Text(
+            doctorPosts.doctorName,
+            style: TextStyle(
+                fontFamily: "OoohBaby",
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.red),
+          ),
+          subtitle: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.phone),
+                  Text(doctorPosts.doctorPhone),
+                ],
+              ),
+              Row(
+                children: [
+                  Icon(Icons.category_sharp),
+                  Text(doctorPosts.doctorType),
+                ],
+              ),
+              Row(
+                children: [
+                  Icon(Icons.access_time_rounded),
+                  Text(doctorPosts.openingTime),
+                ],
+              ),
+              Row(
+                children: [
+                  Icon(Icons.location_on),
+                  Text(doctorPosts.doctorLocation),
+                ],
+              ),
+              Row(
+                children: [
+                  Icon(Icons.email),
+                  Text(doctorPosts.doctorEmail),
+                ],
+              )
+            ],
+          ),
+          trailing: IconButton(
+            onPressed: () {
+              //TODO: add book
+            },
+            icon: Icon(
+              Icons.add,
+              color: Colors.red,
+            ),
+          ),
         ),
-        title: Text(doctorPosts.doctorPhone),
       );
 }
