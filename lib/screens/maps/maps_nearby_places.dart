@@ -3,6 +3,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:saveme/webservices/webservices.dart';
 
+//Note: it was just used for passing parameters to nearby_places_screen
 class NearByPlaceScreen extends StatefulWidget {
   static const id = 'nearby_place_screen';
 

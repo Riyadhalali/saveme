@@ -1,5 +1,5 @@
 class DoctorPosts {
-  //String doctorId;
+  String doctorId;
   String doctorName;
   String doctorType;
   String openingTime;
@@ -8,8 +8,7 @@ class DoctorPosts {
   String doctorEmail;
 
   DoctorPosts(
-      {
-      //required this.doctorId,
+      {required this.doctorId,
       required this.doctorName,
       required this.doctorType,
       required this.openingTime,
@@ -18,6 +17,7 @@ class DoctorPosts {
       required this.doctorEmail});
 
   Map<String, dynamic> toJson() => {
+        'doctorId': doctorId,
         'doctorName': doctorName,
         'doctorType': doctorType,
         'openingTime': openingTime,
@@ -27,6 +27,7 @@ class DoctorPosts {
       };
 
   static DoctorPosts fromJson(Map<String, dynamic> json) => DoctorPosts(
+      doctorId: json['doctorId'],
       doctorName: json['doctorName'],
       doctorType: json['doctorType'],
       openingTime: json['openingTime'],

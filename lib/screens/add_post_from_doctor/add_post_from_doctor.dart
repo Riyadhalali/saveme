@@ -1,5 +1,6 @@
 // this class for doctors so they can add posts about services they give
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:saveme/api_models/doctor_post_model.dart';
@@ -28,7 +29,26 @@ class _AddPostsFromDoctorState extends State<AddPostsFromDoctor> {
   bool _validateDoctorEmail = false;
   bool _validateDoctorLocation = false;
 
+  String? userID;
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+
+  // get user data from firebase
+  void getUserFromFirebase() {
+    final User user = firebaseAuth.currentUser!;
+    setState(() {
+      userID = user.uid;
+      print(userID);
+    });
+  }
+
   MyWidgets myWidgets = new MyWidgets();
+
+  @override
+  void initState() {
+    super.initState();
+    getUserFromFirebase();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -235,6 +255,7 @@ method one:
 */
     // method two
     final doctor = DoctorPosts(
+        doctorId: userID.toString(),
         doctorName: doctorName,
         doctorType: doctorType,
         openingTime: openingTime,

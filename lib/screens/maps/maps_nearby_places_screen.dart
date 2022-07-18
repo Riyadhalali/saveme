@@ -4,6 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:saveme/screens/maps/maps_utils.dart';
 import 'package:saveme/webservices/webservices.dart';
+import 'package:saveme/widgets/mywidgets.dart';
 
 // this class is for showing the nearby places using polylines
 class MapsNearByPlacesScreen extends StatefulWidget {
@@ -23,6 +24,7 @@ class _MapsNearByPlacesScreenState extends State<MapsNearByPlacesScreen> {
   Map<PolylineId, Polyline> polylines = {};
   List<LatLng> polylineCoordinates = [];
   PolylinePoints polylinePoints = PolylinePoints();
+  MyWidgets myWidgets = MyWidgets();
 
 //**************Variables for nearby place***************************************
   late LatLng currentLocation;
@@ -47,17 +49,22 @@ class _MapsNearByPlacesScreenState extends State<MapsNearByPlacesScreen> {
       // destinationLocation = LatLng(DEST_LOCATION.latitude, DEST_LOCATION.longitude);
     });
     // receive it as Map from webservices
-    Map place = await WebServices.searchNearbyPlacesOnePlace(
-        widget.placetoSearch.toString(),
-        latitudeData.toString(),
-        long.toString(),
-        kGoogleApiKey,
-        "500",
-        widget.typetoSearch.toString());
-    setState(() {
-      nearbyLocation = LatLng(place["lat"], place["lng"]);
-      nearbyPlaceName = place['name'];
-    });
+
+    try {
+      Map place = await WebServices.searchNearbyPlacesOnePlace(
+          widget.placetoSearch.toString(),
+          latitudeData.toString(),
+          long.toString(),
+          kGoogleApiKey,
+          "500",
+          widget.typetoSearch.toString());
+      setState(() {
+        nearbyLocation = LatLng(place["lat"], place["lng"]);
+        nearbyPlaceName = place['name'];
+      });
+    } on Exception catch (e) {
+      myWidgets.displaySnackMessage(e.toString(), context);
+    }
   }
 
   @override

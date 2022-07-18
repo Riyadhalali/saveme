@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:saveme/screens/patient_screen/patient_screen.dart';
+import 'package:saveme/navigator.dart';
 import 'package:saveme/services/sharedpreferences.dart';
 import 'package:saveme/widgets/mywidgets.dart';
 import 'package:saveme/widgets/textinputfield.dart';
@@ -36,7 +36,7 @@ class _SignInState extends State<SignIn> {
   //------------------------------Functions-------------------------------------
   //-> Loading User Data if he is already signed in to the program
   Future loadUserDataLogin() async {
-    email_data = await sharedPref.LoadData("phone");
+    email_data = await sharedPref.LoadData("email");
     password_data = await sharedPref.LoadData('password');
     uid_data = await sharedPref.LoadData("uid");
     if (email_data != null && password_data != null) {
@@ -52,7 +52,7 @@ class _SignInState extends State<SignIn> {
   @override
   void initState() {
     super.initState();
-    //   loadUserDataLogin();
+    loadUserDataLogin();
   }
 
   @override
@@ -247,8 +247,6 @@ class _SignInState extends State<SignIn> {
       return;
     }
 
-    sharedPref.setData('email', _emailcontroller.text);
-    sharedPref.setData('password', _passwordcontroller.text);
     // show a snackbar message
 
     myWidgets.showProcessingDialog(" جاري تسجيل الدخول ... ", context);
@@ -261,8 +259,11 @@ class _SignInState extends State<SignIn> {
       // print(user?.uid);
       if (user?.uid != null) {
         Navigator.of(context).pop();
+        //-> save to shared preferences
         sharedPref.setData("uid", user!.uid.toString());
-        Navigator.of(context).pushNamed(PatientScreen.id);
+        sharedPref.setData('email', _emailcontroller.text);
+        sharedPref.setData('password', _passwordcontroller.text);
+        Navigator.of(context).pushNamed(Navigations.id);
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:saveme/screens/doctor_screen/doctor_screen.dart';
+import 'package:saveme/drawer.dart';
+import 'package:saveme/screens/myappointments/myappointments.dart';
 
-import 'screens/patient_screen/patient_screen.dart';
+import 'screens/doctor_services/doctor_services.dart';
 
 class Navigations extends StatefulWidget {
   static const String id = 'navigations';
@@ -22,8 +23,8 @@ class _NavigationsState extends State<Navigations> {
 
   //---------------------------List of Pages------------------------------------
   final List<Widget> _pages = [
-    PatientScreen(),
-    DoctorScreen(),
+    DoctorServices(),
+    MyAppointments(),
   ];
   //--------------------------On Tapped item-----------------------------------
   _onTapped(int index) {
@@ -45,7 +46,7 @@ class _NavigationsState extends State<Navigations> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(),
+      drawer: DrawePage(),
       body: PageView(
         children: _pages,
         physics: NeverScrollableScrollPhysics(),
@@ -56,8 +57,8 @@ class _NavigationsState extends State<Navigations> {
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed, // to make it unsizable
         items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "صفحة المريض"),
-          BottomNavigationBarItem(icon: Icon(Icons.car_rental), label: "صفحة الطبيب"),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "الأطباء"),
+          BottomNavigationBarItem(icon: Icon(Icons.car_rental), label: "مواعيدي"),
           BottomNavigationBarItem(icon: Icon(Icons.date_range), label: "الاستشارات الطبية"),
         ],
         currentIndex: selectedPage,

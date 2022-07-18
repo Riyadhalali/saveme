@@ -51,7 +51,10 @@ class DrawePage extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.archive_rounded),
+            leading: Icon(
+              Icons.archive_rounded,
+              color: Colors.red,
+            ),
             title: Text('الوصول إلى أقرب مشفى'),
             onTap: () {
               Navigator.push(
@@ -64,7 +67,7 @@ class DrawePage extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.archive_rounded),
+            leading: Icon(Icons.emergency, color: Colors.red),
             title: Text('الوصول إلى أقرب عيادة طبيب'),
             onTap: () {
               Navigator.push(
@@ -77,7 +80,10 @@ class DrawePage extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.archive_rounded),
+            leading: Icon(
+              Icons.local_pharmacy,
+              color: Colors.red,
+            ),
             title: Text('الوصول إلى أقرب صيدلية'),
             onTap: () {
               Navigator.push(
@@ -90,7 +96,10 @@ class DrawePage extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.help),
+            leading: Icon(
+              Icons.help,
+              color: Colors.red,
+            ),
             title: Text('حول'),
             onTap: () {
               //   Navigator.pushNamed(context, Voluntaries.id);
@@ -99,7 +108,10 @@ class DrawePage extends StatelessWidget {
             },
           ),
           ListTile(
-            leading: Icon(Icons.logout),
+            leading: Icon(
+              Icons.logout,
+              color: Colors.red,
+            ),
             title: Text('خروج'),
             onTap: () {
               // exit out of the program
