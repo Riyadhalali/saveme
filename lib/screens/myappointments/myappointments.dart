@@ -12,6 +12,8 @@ class MyAppointments extends StatefulWidget {
 
 class _MyAppointmentsState extends State<MyAppointments> {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  var collection = FirebaseFirestore.instance.collection("appointments");
+
   String? userID;
   String? userEmail;
   // get user data from firebase
@@ -20,15 +22,34 @@ class _MyAppointmentsState extends State<MyAppointments> {
     setState(() {
       userID = user.uid;
       userEmail = user.email;
-      //  print("name of user is: $userEmail");
+      print("name of user is: $userID");
     });
   }
 
+//for using model class
   Stream<List<BookModel>> getAppointments() => FirebaseFirestore.instance
       .collection('appointments')
-      //    .doc(userID)
+      //.doc(userID)
       .snapshots()
-      .map((list) => list.docs.map((doc) => BookModel.fromJson(doc.data())).toList());
+      .map((snapshot) => snapshot.docs.map((doc) => BookModel.fromJson(doc.data())).toList());
+
+  fetchDoc() async {
+    var docSnapshot = await collection.doc(userID).get();
+    print("the docSnapshot${docSnapshot.data()}");
+    if (docSnapshot.exists) {
+      Map<String, dynamic>? data = docSnapshot.data();
+
+      print(data);
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getUserFromFirebase();
+    fetchDoc();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,15 +64,75 @@ class _MyAppointmentsState extends State<MyAppointments> {
             icon: Icon(Icons.menu)),
         backgroundColor: Colors.deepOrange,
       ),
-      body: StreamBuilder<List<BookModel>>(
-          stream: getAppointments(),
-          builder: (context, snapshot) {
+      body: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+          stream: FirebaseFirestore.instance
+              .collection('appointments')
+              .doc(userID) //ID OF DOCUMENT
+              .snapshots(),
+          builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
             if (snapshot.hasError) {
               return Text('يوجد خطأ ما .. ');
             } else if (snapshot.hasData) {
-              final appointments = snapshot.data!;
-              return ListView(
-                children: appointments.map(buildAppointments).toList(),
+              Map<String, dynamic>? output = snapshot.data!.data();
+              var value = output!['doctorName']; // <-- Your value
+              // using model class
+              var book = BookModel.fromJson(output!);
+              print(book.doctorId);
+
+              return Card(
+                child: ListTile(
+                  leading: CircleAvatar(child: Text(output['doctorName'])),
+                  title: Text(
+                    // output['doctorName'],
+                    book.doctorName, // using book model
+                    style: TextStyle(
+                        fontFamily: "OoohBaby",
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red),
+                  ),
+                  subtitle: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.phone),
+                          Text(output['doctorPhone']),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Icon(Icons.category_sharp),
+                          Text(output['doctorType']),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Icon(Icons.access_time_rounded),
+                          Text(output['reviewDate']),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Icon(Icons.location_on),
+                          Text(output['doctorLocation']),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Icon(Icons.email),
+                          Text(output['doctorEmail']),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Icon(Icons.real_estate_agent_rounded),
+                          Text(output['reviewState']),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               );
             } else
               return Center(
@@ -61,6 +142,7 @@ class _MyAppointmentsState extends State<MyAppointments> {
     );
   }
 
+// we can use this widget when we use to get all data
   Widget buildAppointments(BookModel bookModel) => Card(
         child: ListTile(
           leading: CircleAvatar(child: Text(bookModel.doctorName)),
@@ -116,4 +198,3 @@ class _MyAppointmentsState extends State<MyAppointments> {
         ),
       );
 } // end class
-//TODO: get based on the id of the user

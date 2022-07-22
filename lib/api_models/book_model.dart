@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:convert';
 class BookModel {
   String doctorId;
   String doctorName;
@@ -56,4 +58,7 @@ class BookModel {
       patientEmail: json['patientEmail'],
       reviewDate: json['reviewDate'],
       reviewState: json['reviewState']);
-}
+
+
+
+} // end class
