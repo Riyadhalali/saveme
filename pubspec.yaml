@@ -25,6 +25,7 @@ dependencies:
   google_place: ^0.4.7
   custom_info_window: ^1.0.1
   cloud_firestore: ^3.3.0
+  provider: ^6.0.3
 
 
   cupertino_icons: ^1.0.2

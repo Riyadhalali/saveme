@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:saveme/screens/add_post_from_doctor/add_post_from_doctor.dart';
 import 'package:saveme/screens/maps/maps_nearby_places_screen.dart';
 import 'package:saveme/screens/maps/maps_shortest_path.dart';
 import 'package:saveme/widgets/mywidgets.dart';
+
+import 'provider/permissions_provider.dart';
 
 class DrawePage extends StatelessWidget {
   const DrawePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    PermissionsProvider permissionsProvider =
+        Provider.of<PermissionsProvider>(context, listen: false);
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -37,18 +42,21 @@ class DrawePage extends StatelessWidget {
               Navigator.pushNamed(context, MapsPageShortestPath.id);
             },
           ),
-          ListTile(
-            leading: Icon(
-              Icons.add_box,
-              color: Colors.red,
+          Visibility(
+            visible: permissionsProvider.showAddDoctor,
+            child: ListTile(
+              leading: Icon(
+                Icons.add_box,
+                color: Colors.red,
+              ),
+              title: Text(
+                'إضافة عيادة طبيب',
+              ),
+              onTap: () {
+                // to add post from doctors
+                Navigator.pushNamed(context, AddPostsFromDoctor.id);
+              },
             ),
-            title: Text(
-              'إضافة عيادة طبيب',
-            ),
-            onTap: () {
-              // to add post from doctors
-              Navigator.pushNamed(context, AddPostsFromDoctor.id);
-            },
           ),
           ListTile(
             leading: Icon(

@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:saveme/navigator.dart';
+import 'package:saveme/screens/sign_in/sign_in.dart';
 
 import '../../widgets/image_background.dart';
 
@@ -18,7 +18,7 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future onDoneLoading() async {
-    Navigator.pushNamed(context, Navigations.id);
+    Navigator.pushNamed(context, SignIn.id);
   }
 
   @override

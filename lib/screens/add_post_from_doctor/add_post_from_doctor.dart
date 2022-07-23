@@ -32,6 +32,22 @@ class _AddPostsFromDoctorState extends State<AddPostsFromDoctor> {
   String? userID;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
+  List<String> dropDownItems = [
+    'عينية',
+    'سنية',
+    'قلبية',
+    'داخلية',
+    'نسائية',
+    'جلدية',
+    'عظمية',
+    'صدرية',
+    'أطفال',
+    'عصبية',
+    'بولية',
+    'أمراض الدم'
+  ];
+  String? selectedDropItem = 'عينية';
+
   // get user data from firebase
   void getUserFromFirebase() {
     final User user = firebaseAuth.currentUser!;
@@ -144,14 +160,38 @@ class _AddPostsFromDoctorState extends State<AddPostsFromDoctor> {
             SizedBox(
               height: 1.0,
             ),
-            TextInputField(
-              hint_text: "اختصاص الطبيب",
-              controller_text: _doctorTypeController,
-              show_password: false,
-              error_msg: _validateDoctorType ? "يرجى إضافة الاختصاص" : " ",
+            // TextInputField(
+            //   hint_text: "اختصاص الطبيب",
+            //   controller_text: _doctorTypeController,
+            //   show_password: false,
+            //   error_msg: _validateDoctorType ? "يرجى إضافة الاختصاص" : " ",
+            // ),
+            Container(
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.red, width: 1),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12.0)),
+              width: MediaQuery.of(context).size.width * 0.7,
+              child: Center(
+                child: DropdownButton<String>(
+                    value: selectedDropItem,
+                    items: dropDownItems
+                        .map((item) => DropdownMenuItem(
+                            value: item,
+                            child: Container(
+                              child: Text(
+                                item,
+                                style: TextStyle(fontSize: 20.0),
+                              ),
+                            )))
+                        .toList(),
+                    onChanged: (item) => setState(() {
+                          selectedDropItem = item;
+                        })),
+              ),
             ),
             SizedBox(
-              height: 1.0,
+              height: 15.0,
             ),
             TextInputField(
               hint_text: "وقت الدوام",
@@ -214,7 +254,7 @@ class _AddPostsFromDoctorState extends State<AddPostsFromDoctor> {
       _doctorNameController.text.isEmpty
           ? _validateDoctorEmail = true
           : _validateDoctorName = false;
-      _doctorTypeController.text.isEmpty ? _validateDoctorType = true : _validateDoctorType = false;
+      //_doctorTypeController.text.isEmpty ? _validateDoctorType = true : _validateDoctorType = false;
       _openingTimeController.text.isEmpty
           ? _validateOpeningTime = true
           : _validateOpeningTime = false;
@@ -230,7 +270,7 @@ class _AddPostsFromDoctorState extends State<AddPostsFromDoctor> {
     });
 
     if (_validateDoctorEmail ||
-        _validateDoctorType ||
+        //  selectedDropItem != null ||
         _validateOpeningTime ||
         _validateDoctorLocation ||
         _validateDoctorPhone ||
@@ -257,7 +297,7 @@ method one:
     final doctor = DoctorPosts(
         doctorId: userID.toString(),
         doctorName: doctorName,
-        doctorType: doctorType,
+        doctorType: selectedDropItem.toString(),
         openingTime: openingTime,
         doctorLocation: doctorLocation,
         doctorPhone: doctorPhone,

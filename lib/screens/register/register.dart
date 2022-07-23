@@ -19,6 +19,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _passwordController = TextEditingController();
   final _phoneController = TextEditingController();
   final _nameController = TextEditingController();
+  final _syndicateIdController = TextEditingController();
 
   //-> add firebase auth
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
@@ -30,7 +31,15 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _validatePhone = false;
   bool _validateName = false;
   bool emailValid = false; // to check if user has entered a valid email address
+  bool _validateSyndicateID = false;
+  bool showSyndicateTextField = false;
   MyWidgets myWidgets = new MyWidgets();
+
+  String? selectedDropItem = 'مريض';
+  List<String> dropDownItems = [
+    'مريض',
+    'طبيب',
+  ];
 
   Future<void> login() async {
     //- To check the user already entered username and password
@@ -41,10 +50,18 @@ class _RegisterPageState extends State<RegisterPage> {
 
       _phoneController.text.isEmpty ? _validatePhone = true : _validatePhone = false;
       _nameController.text.isEmpty ? _validateName = true : _validateName = false;
+
+      _syndicateIdController.text.isEmpty
+          ? _validateSyndicateID = true
+          : _validateSyndicateID = false;
     });
 
     //  if user didn't enter username or password or phone keep inside
-    if (_validateUsername || _validatePassword || _validatePhone || _validateName) {
+    if (_validateUsername ||
+        _validatePassword ||
+        _validatePhone ||
+        _validateName ||
+        (showSyndicateTextField == true && _validateSyndicateID)) {
       return;
     }
 
@@ -78,7 +95,9 @@ class _RegisterPageState extends State<RegisterPage> {
         'id': _uid,
         'name': _nameController.text,
         'email': _emailController.text,
-        'phone_number': _phoneController.text
+        'phone_number': _phoneController.text,
+        'userType': selectedDropItem, // if patient or doctor
+        'syndicateId': _syndicateIdController.text
       });
 
       //-> Display snackbar message
@@ -213,7 +232,50 @@ class _RegisterPageState extends State<RegisterPage> {
               error_msg: _validatePassword ? "يرجى تعبئة الحقل" : " ",
             ),
             SizedBox(
-              height: 5.0,
+              height: 2.0,
+            ),
+            Container(
+              decoration: BoxDecoration(
+                  border: Border.all(color: Colors.red, width: 1),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12.0)),
+              width: MediaQuery.of(context).size.width * 0.7,
+              child: Center(
+                child: DropdownButton<String>(
+                    value: selectedDropItem,
+                    items: dropDownItems
+                        .map((item) => DropdownMenuItem(
+                            value: item,
+                            child: Container(
+                              child: Text(
+                                item,
+                                style: TextStyle(fontSize: 20.0),
+                              ),
+                            )))
+                        .toList(),
+                    onChanged: (item) => setState(() {
+                          selectedDropItem = item;
+                          if (selectedDropItem == 'طبيب') {
+                            showSyndicateTextField = true;
+                          } else {
+                            showSyndicateTextField = false;
+                          }
+                        })),
+              ),
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
+            Visibility(
+              visible: showSyndicateTextField,
+              child: TextInputField(
+                hint_text: "رقم هوية النقابة",
+                //label_text: "username",
+                controller_text: _syndicateIdController,
+                show_password: false,
+                error_msg: _validateSyndicateID ? "يرجى تعبئة الحقل" : "",
+                FunctionToDo: () {},
+              ),
             ),
             TextInputField(
               hint_text: "رقم الهاتف",

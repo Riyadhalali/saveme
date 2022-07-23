@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:saveme/navigator.dart';
@@ -32,7 +33,16 @@ class _SignInState extends State<SignIn> {
   FirebaseAuth firebaseAuth = FirebaseAuth.instance; // add firebase auth
   MyWidgets myWidgets = new MyWidgets();
   bool emailValid = false;
+  String dropDownMenuValue = '';
+  List<String> dropDownItems = [
+    'مريض',
+    'طبيب',
+  ];
 
+  String? userID;
+  String? userEmail;
+
+  var collection = FirebaseFirestore.instance.collection("users"); // to get the state of users
   //------------------------------Functions-------------------------------------
   //-> Loading User Data if he is already signed in to the program
   Future loadUserDataLogin() async {
@@ -47,12 +57,34 @@ class _SignInState extends State<SignIn> {
     }
   }
 
+  // get user data from firebase
+  void getUserFromFirebase() {
+    final User user = firebaseAuth.currentUser!;
+    setState(() {
+      userID = user.uid;
+      userEmail = user.email;
+      //  print("name of user is: $userEmail");
+    });
+  }
+
+  fetchDoc() async {
+    var docSnapshot = await collection.doc(userID).get();
+    print("the docSnapshot${docSnapshot.data()}");
+    if (docSnapshot.exists) {
+      Map<String, dynamic>? data = docSnapshot.data();
+
+      // print(data);
+    }
+  }
 //******************************************************************************
 
   @override
   void initState() {
     super.initState();
     loadUserDataLogin();
+    getUserFromFirebase();
+    getUserFromFirebase();
+    fetchDoc();
   }
 
   @override
@@ -185,6 +217,7 @@ class _SignInState extends State<SignIn> {
               error_msg: validatePassword ? "يرجى تعبئة الحقل" : "",
               FunctionToDo: () {},
             ),
+
             SizedBox(
               height: 3.0,
             ),
@@ -211,6 +244,11 @@ class _SignInState extends State<SignIn> {
             SizedBox(
               height: 1.0,
             ),
+
+            SizedBox(
+              height: 10.0,
+            ),
+
             Login(),
             SizedBox(
               height: 1.0,
@@ -278,4 +316,3 @@ class _SignInState extends State<SignIn> {
 //------------------------------------------------------------------------------
 
 } // end class
-//TODO: when can add strem builder or user then. for future call to show the error

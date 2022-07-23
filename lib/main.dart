@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:saveme/navigator.dart';
+import 'package:saveme/provider/permissions_provider.dart';
 import 'package:saveme/screens/add_post_from_doctor/add_post_from_doctor.dart';
 import 'package:saveme/screens/maps/maps_nearby_places_screen.dart';
 import 'package:saveme/screens/maps/maps_search_screen.dart';
@@ -24,25 +26,28 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        title: 'Save Me',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        initialRoute: SplashScreen.id,
-        debugShowCheckedModeBanner: false,
-        routes: {
-          SplashScreen.id: (context) => SplashScreen(),
-          SignIn.id: (context) => SignIn(),
-          RegisterPage.id: (context) => RegisterPage(),
+    return MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => PermissionsProvider())],
+      child: MaterialApp(
+          title: 'Save Me',
+          theme: ThemeData(
+            primarySwatch: Colors.blue,
+          ),
+          initialRoute: SplashScreen.id,
+          debugShowCheckedModeBanner: false,
+          routes: {
+            SplashScreen.id: (context) => SplashScreen(),
+            SignIn.id: (context) => SignIn(),
+            RegisterPage.id: (context) => RegisterPage(),
 
-          Navigations.id: (context) => Navigations(),
-          MapsPageShortestPath.id: (context) => MapsPageShortestPath(), // shortest path
-          MapsSearchScreen.id: (context) => MapsSearchScreen(),
-          MapsNearByPlacesScreen.id: (context) => MapsNearByPlacesScreen(),
-          AddPostsFromDoctor.id: (context) => AddPostsFromDoctor(),
-          DoctorServices.id: (context) => DoctorServices(),
-          MyAppointments.id: (context) => MyAppointments(),
-        });
+            Navigations.id: (context) => Navigations(),
+            MapsPageShortestPath.id: (context) => MapsPageShortestPath(), // shortest path
+            MapsSearchScreen.id: (context) => MapsSearchScreen(),
+            MapsNearByPlacesScreen.id: (context) => MapsNearByPlacesScreen(),
+            AddPostsFromDoctor.id: (context) => AddPostsFromDoctor(),
+            DoctorServices.id: (context) => DoctorServices(),
+            MyAppointments.id: (context) => MyAppointments(),
+          }),
+    );
   }
 }
