@@ -18,7 +18,7 @@ class SignIn extends StatefulWidget {
 
 class _SignInState extends State<SignIn> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  late String email_data, password_data, uid_data; //variables for holding shared pref data
+  String? email_data, password_data, uid_data; //variables for holding shared pref data
   late String usernameData; // this variable to store data returned from getUserInfo Api
   late String userPhoneData; // this variable to store data returned from getUserInfo Api
   late String userGenderData; // this variable to store data returned from getUserInfo Api
@@ -45,26 +45,29 @@ class _SignInState extends State<SignIn> {
   var collection = FirebaseFirestore.instance.collection("users"); // to get the state of users
   //------------------------------Functions-------------------------------------
   //-> Loading User Data if he is already signed in to the program
-  Future loadUserDataLogin() async {
+  void loadUserDataLogin() async {
     email_data = await sharedPref.LoadData("email");
     password_data = await sharedPref.LoadData('password');
     uid_data = await sharedPref.LoadData("uid");
-    if (email_data != null && password_data != null) {
+
+    if (email_data!= null  || password_data != null || uid_data!= null) {
       setState(() {
-        _emailcontroller.text = email_data;
-        _passwordcontroller.text = password_data;
+        _emailcontroller.text = email_data!;
+        _passwordcontroller.text = password_data!;
       });
     }
   }
 
   // get user data from firebase
   void getUserFromFirebase() {
-    final User user = firebaseAuth.currentUser!;
-    setState(() {
-      userID = user.uid;
-      userEmail = user.email;
-      //  print("name of user is: $userEmail");
-    });
+    final User? user = firebaseAuth.currentUser;
+    if (user != null) {
+      setState(() {
+        userID = user.uid;
+        userEmail = user.email;
+        //  print("name of user is: $userEmail");
+      });
+    }
   }
 
   fetchDoc() async {
@@ -81,8 +84,7 @@ class _SignInState extends State<SignIn> {
   @override
   void initState() {
     super.initState();
-    loadUserDataLogin();
-    getUserFromFirebase();
+     loadUserDataLogin();
     getUserFromFirebase();
     fetchDoc();
   }

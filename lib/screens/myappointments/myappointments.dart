@@ -3,7 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:saveme/api_models/book_model.dart';
+import 'package:saveme/provider/permissions_provider.dart';
 import 'package:saveme/widgets/mywidgets.dart';
 
 class MyAppointments extends StatefulWidget {
@@ -67,6 +69,8 @@ class _MyAppointmentsState extends State<MyAppointments> {
 
   @override
   Widget build(BuildContext context) {
+    PermissionsProvider permissionsProvider =
+        Provider.of<PermissionsProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: Text('مواعيدي'),
@@ -147,88 +151,93 @@ class _MyAppointmentsState extends State<MyAppointments> {
                           Text(output['reviewState']),
                         ],
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.edit),
-                            onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return Dialog(
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(15)),
-                                      child: Container(
-                                        height: MediaQuery.of(context).size.height,
-                                        child: Column(
-                                          children: [
-                                            Expanded(
-                                              child: CupertinoDatePicker(
-                                                mode: CupertinoDatePickerMode.dateAndTime,
-                                                initialDateTime: DateTime.now(),
-                                                onDateTimeChanged: (DateTime value) {
-                                                  setState(() {
-                                                    dateTime = value;
-                                                    print(dateTime);
-                                                  });
-                                                },
+                      Visibility(
+                        visible: permissionsProvider.showAddDoctor,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.edit),
+                              onPressed: () {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return Dialog(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(15)),
+                                        child: Container(
+                                          height: MediaQuery.of(context).size.height,
+                                          child: Column(
+                                            children: [
+                                              Expanded(
+                                                child: CupertinoDatePicker(
+                                                  mode: CupertinoDatePickerMode.dateAndTime,
+                                                  initialDateTime: DateTime.now(),
+                                                  onDateTimeChanged: (DateTime value) {
+                                                    setState(() {
+                                                      dateTime = value;
+                                                      print(dateTime);
+                                                    });
+                                                  },
+                                                ),
                                               ),
-                                            ),
-                                            IconButton(
-                                                onPressed: () {
-                                                  // update data in firebase
-                                                  collection
-                                                      .doc(
-                                                          userID) // <-- Doc ID where data should be updated.
-                                                      .update({
-                                                        'reviewDate': dateTime.toString(),
-                                                        'reviewState':
-                                                            'تم قبول المراجعة وتم تحديد الموعد'
-                                                      }) // <-- Updated data
-                                                      .then((_) => myWidgets
-                                                          .showToast("تم التحديث الموعد بنجاح"))
-                                                      .catchError((error) =>
-                                                          print('Update failed: $error'));
-                                                  Navigator.of(context).pop();
-                                                },
-                                                icon: Icon(Icons.save))
-                                          ],
+                                              IconButton(
+                                                  onPressed: () {
+                                                    // update data in firebase
+                                                    collection
+                                                        .doc(
+                                                            userID) // <-- Doc ID where data should be updated.
+                                                        .update({
+                                                          'reviewDate': dateTime.toString(),
+                                                          'reviewState':
+                                                              'تم قبول المراجعة وتم تحديد الموعد'
+                                                        }) // <-- Updated data
+                                                        .then((_) => myWidgets
+                                                            .showToast("تم التحديث الموعد بنجاح"))
+                                                        .catchError((error) =>
+                                                            print('Update failed: $error'));
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  icon: Icon(Icons.save))
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  });
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () {
-                              //TODO:
-                              collection
-                                  .doc(userID) // <-- Doc ID where data should be updated.
-                                  .delete() // <-- Updated data
-                                  .then((_) => myWidgets.showToast("تم حذف الموعد بنجاح"))
-                                  .catchError((error) => print('Update failed: $error'));
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.done),
-                            onPressed: () {
-                              collection
-                                  .doc(userID) // <-- Doc ID where data should be updated.
-                                  .delete() // <-- Updated data
-                                  .then((_) => myWidgets.showToast("تم الانتهاء من الموعد بنجاح"))
-                                  .catchError((error) => print('Update failed: $error'));
-                            },
-                          ),
-                        ],
+                                      );
+                                    });
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.delete),
+                              onPressed: () {
+                                //TODO:
+                                collection
+                                    .doc(userID) // <-- Doc ID where data should be updated.
+                                    .delete() // <-- Updated data
+                                    .then((_) => myWidgets.showToast("تم حذف الموعد بنجاح"))
+                                    .catchError((error) => print('Update failed: $error'));
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.done),
+                              onPressed: () {
+                                collection
+                                    .doc(userID) // <-- Doc ID where data should be updated.
+                                    .delete() // <-- Updated data
+                                    .then((_) => myWidgets.showToast("تم الانتهاء من الموعد بنجاح"))
+                                    .catchError((error) => print('Update failed: $error'));
+                              },
+                            ),
+                          ],
+                        ),
                       )
                     ],
                   ),
                 ),
               );
-            } else if (snapshot.data == null) {
-              return Text("no result found");
+            } else if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
             } else {
               // must return circuleprogressindicator
               return Center(child: Text("No result found"));
@@ -293,3 +302,4 @@ class _MyAppointmentsState extends State<MyAppointments> {
         ),
       );
 } // end class
+// TODO: when getting data it shows error

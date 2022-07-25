@@ -24,6 +24,7 @@ class _DoctorServicesState extends State<DoctorServices> {
 
   Stream<List<DoctorPosts>> readPosts() => FirebaseFirestore.instance
       .collection('posts')
+      .orderBy("doctorType")
       .snapshots()
       .map((snapshot) => snapshot.docs.map((doc) => DoctorPosts.fromJson(doc.data())).toList());
 
@@ -70,9 +71,17 @@ class _DoctorServicesState extends State<DoctorServices> {
             return Center(child: Text("حصل خطأ ما ...!"));
           } else if (snapshot.hasData) {
             final posts = snapshot.data!;
-            return ListView(
-              children: posts.map(buildPosts).toList(),
-            );
+            if (posts.isEmpty) {
+              return Center(
+                  child: Text(
+                "لا يوجد نتائج",
+                style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 20.0),
+              ));
+            } else {
+              return ListView(
+                children: posts.map(buildPosts).toList(),
+              );
+            }
           } else
             return Center(
               child: CircularProgressIndicator(),
@@ -111,7 +120,7 @@ class _DoctorServicesState extends State<DoctorServices> {
               Row(
                 children: [
                   Icon(Icons.access_time_rounded),
-                  Text(doctorPosts.openingTime),
+                  Expanded(child: Text(doctorPosts.openingTime)),
                 ],
               ),
               Row(

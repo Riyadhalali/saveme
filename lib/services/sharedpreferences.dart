@@ -19,6 +19,7 @@ class SharedPref {
     var returned_data;
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     returned_data = sharedPreferences.getString(key);
+
     return returned_data;
   }
 } // end class
