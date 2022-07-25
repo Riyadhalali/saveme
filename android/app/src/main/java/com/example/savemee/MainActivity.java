@@ -1,4 +1,4 @@
-package com.example.saveme;
+package com.example.savemee;
 
 import io.flutter.embedding.android.FlutterActivity;
 
