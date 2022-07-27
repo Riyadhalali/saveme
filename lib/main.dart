@@ -9,6 +9,7 @@ import 'package:saveme/screens/maps/maps_search_screen.dart';
 import 'package:saveme/screens/maps/maps_shortest_path.dart';
 import 'package:saveme/screens/myappointments/myappointments.dart';
 import 'package:saveme/screens/register/register.dart';
+import 'package:saveme/screens/search_doctors/search_doctors.dart';
 import 'package:saveme/screens/sign_in/sign_in.dart';
 
 import 'screens/doctor_services/doctor_services.dart';
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
             AddPostsFromDoctor.id: (context) => AddPostsFromDoctor(),
             DoctorServices.id: (context) => DoctorServices(),
             MyAppointments.id: (context) => MyAppointments(),
+            SearchResults.id: (context) => SearchResults(),
           }),
     );
   }

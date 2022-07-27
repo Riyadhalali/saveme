@@ -28,6 +28,8 @@ class _DoctorServicesState extends State<DoctorServices> {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   var collection = FirebaseFirestore.instance.collection("users");
 
+  final controllerSearch = TextEditingController();
+
   Stream<List<DoctorPosts>> readPosts() => FirebaseFirestore.instance
       .collection('posts')
       .orderBy("doctorType")
@@ -79,11 +81,11 @@ class _DoctorServicesState extends State<DoctorServices> {
     }
   }
 
-  Stream<List<BookModel>> searchResults() => FirebaseFirestore.instance
-      .collection('appointments')
-      .where('doctorName', isEqualTo: "الجندي")
-      .snapshots()
-      .map((snapshot) => snapshot.docs.map((doc) => BookModel.fromJson(doc.data())).toList());
+  // Stream<List<BookModel>> searchResults() => FirebaseFirestore.instance
+  //     .collection('appointments')
+  //     .where('doctorName', isEqualTo: "الجندي")
+  //     .snapshots()
+  //     .map((snapshot) => snapshot.docs.map((doc) => BookModel.fromJson(doc.data())).toList());
 
   @override
   void initState() {
@@ -92,21 +94,34 @@ class _DoctorServicesState extends State<DoctorServices> {
     getUserFromFirebase();
     fetchDoc();
     fetchUserInfo();
-    searchResults();
+    //searchResults();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: [],
+        actions: [
+          IconButton(
+            onPressed: () {
+              //TODO: open dialog to enter searching and pass it to screen
+              //   Navigator.of(context).pushNamed(SearchResults.id);
+            },
+            icon: Icon(Icons.search),
+          ),
+          TextField(
+            controller: controllerSearch,
+            decoration: InputDecoration(),
+            onChanged: (value) {},
+          )
+        ],
         leading: IconButton(
             onPressed: () {
               // open drawer
               Scaffold.of(context).openDrawer();
             },
             icon: Icon(Icons.menu)),
-        title: Text("قائمة الأطباء"),
+        //   title: Text("قائمة الأطباء"),
         backgroundColor: Colors.deepOrange,
       ),
       body: StreamBuilder<List<DoctorPosts>>(
