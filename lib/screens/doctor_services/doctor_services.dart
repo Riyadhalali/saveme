@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:saveme/api_models/book_model.dart';
 import 'package:saveme/api_models/doctor_post_model.dart';
 import 'package:saveme/provider/permissions_provider.dart';
+import 'package:saveme/screens/search_doctors/search_doctors.dart';
 import 'package:saveme/services/sharedpreferences.dart';
 
 class DoctorServices extends StatefulWidget {
@@ -25,6 +26,7 @@ class _DoctorServicesState extends State<DoctorServices> {
   String? userName;
   String? userPhone;
   String? userType;
+  String? textToSearch;
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   var collection = FirebaseFirestore.instance.collection("users");
 
@@ -81,11 +83,11 @@ class _DoctorServicesState extends State<DoctorServices> {
     }
   }
 
-  // Stream<List<BookModel>> searchResults() => FirebaseFirestore.instance
-  //     .collection('appointments')
-  //     .where('doctorName', isEqualTo: "الجندي")
-  //     .snapshots()
-  //     .map((snapshot) => snapshot.docs.map((doc) => BookModel.fromJson(doc.data())).toList());
+  Stream<List<DoctorPosts>> searchResults() => FirebaseFirestore.instance
+      .collection('posts')
+      .where('doctorPhone', isEqualTo: controllerSearch.text)
+      .snapshots()
+      .map((snapshot) => snapshot.docs.map((doc) => DoctorPosts.fromJson(doc.data())).toList());
 
   @override
   void initState() {
@@ -105,15 +107,16 @@ class _DoctorServicesState extends State<DoctorServices> {
           IconButton(
             onPressed: () {
               //TODO: open dialog to enter searching and pass it to screen
-              //   Navigator.of(context).pushNamed(SearchResults.id);
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => SearchResults(
+                    textToSearch: textToSearch,
+                  ),
+                ),
+              );
             },
             icon: Icon(Icons.search),
           ),
-          TextField(
-            controller: controllerSearch,
-            decoration: InputDecoration(),
-            onChanged: (value) {},
-          )
         ],
         leading: IconButton(
             onPressed: () {
@@ -121,7 +124,17 @@ class _DoctorServicesState extends State<DoctorServices> {
               Scaffold.of(context).openDrawer();
             },
             icon: Icon(Icons.menu)),
-        //   title: Text("قائمة الأطباء"),
+        title: TextField(
+          controller: controllerSearch,
+          decoration: InputDecoration(),
+          onChanged: (value) {
+            setState(() {
+              textToSearch = value;
+              print(textToSearch);
+            });
+            //      return Text(value.toString());
+          },
+        ),
         backgroundColor: Colors.deepOrange,
       ),
       body: StreamBuilder<List<DoctorPosts>>(
