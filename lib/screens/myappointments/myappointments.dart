@@ -18,9 +18,11 @@ class MyAppointments extends StatefulWidget {
 class _MyAppointmentsState extends State<MyAppointments> {
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   var collection = FirebaseFirestore.instance.collection("appointments");
+  var collectionUsers = FirebaseFirestore.instance.collection("users");
 
   String? userID;
   String? userEmail;
+  String? doctorType;
   DateTime dateTime = DateTime.now();
   var inputFormat = DateFormat('dd/MM/yyyy HH:mm');
 
@@ -45,7 +47,7 @@ class _MyAppointmentsState extends State<MyAppointments> {
 //for using model class
   Stream<List<BookModel>> getAppointments() => FirebaseFirestore.instance
       .collection('appointments')
-      //.doc(userID)
+      .where('doctorId', isEqualTo: userID)
       .snapshots()
       .map((snapshot) => snapshot.docs.map((doc) => BookModel.fromJson(doc.data())).toList());
 
@@ -55,7 +57,7 @@ class _MyAppointmentsState extends State<MyAppointments> {
     if (docSnapshot.exists) {
       Map<String, dynamic>? data = docSnapshot.data();
 
-      print(data);
+      //  print(data);
     }
   }
 
@@ -64,7 +66,7 @@ class _MyAppointmentsState extends State<MyAppointments> {
     super.initState();
     getUserFromFirebase();
     fetchDoc();
-    //formatDate();
+    getAppointments();
   }
 
   @override
@@ -72,234 +74,373 @@ class _MyAppointmentsState extends State<MyAppointments> {
     PermissionsProvider permissionsProvider =
         Provider.of<PermissionsProvider>(context, listen: false);
     return Scaffold(
-      appBar: AppBar(
-        title: Text('مواعيدي'),
-        leading: IconButton(
-            onPressed: () {
-              // open drawer
-              Scaffold.of(context).openDrawer();
-            },
-            icon: Icon(Icons.menu)),
-        backgroundColor: Colors.deepOrange,
-      ),
-      body: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-          stream: FirebaseFirestore.instance
-              .collection('appointments') //NAME OF Collections
-              .doc(userID) //ID OF DOCUMENT
-              .snapshots(),
-          builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
-            if (snapshot.hasError) {
-              return Text('يوجد خطأ ما .. ');
-            } else if (snapshot.data!.data() != null) {
-              Map<String, dynamic>? output = snapshot.data!.data();
+        appBar: AppBar(
+          title: Text('مواعيدي'),
+          leading: IconButton(
+              onPressed: () {
+                // open drawer
+                Scaffold.of(context).openDrawer();
+              },
+              icon: Icon(Icons.menu)),
+          backgroundColor: Colors.deepOrange,
+        ),
+        //body: buildAppointmentsBasedOnPatient(context));
+        body: permissionsProvider.showAddDoctor
+            ? buildAppointmentsBasedOnDoctors()
+            : buildAppointmentsBasedOnPatient(context));
+  }
 
-              var value = output!['doctorName']; // <-- Your value
-              // using model class
+  Widget buildAppointmentsBasedOnPatient(BuildContext context) {
+    PermissionsProvider permissionsProvider =
+        Provider.of<PermissionsProvider>(context, listen: false);
+    return StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+        stream: FirebaseFirestore.instance
+            .collection('appointments') //NAME OF Collections
+            .doc(userID) //ID OF DOCUMENT
+            .snapshots(),
+        builder: (context, AsyncSnapshot<DocumentSnapshot<Map<String, dynamic>>> snapshot) {
+          if (snapshot.hasError) {
+            return Text('يوجد خطأ ما .. ');
+          } else if (snapshot.data!.data() != null) {
+            Map<String, dynamic>? output = snapshot.data!.data();
 
-              var book = BookModel.fromJson(output);
-              //   print(book.doctorId);
+            var value = output!['doctorName']; // <-- Your value
+            // using model class
 
-              return Card(
-                child: ListTile(
-                  isThreeLine: false,
-                  leading: CircleAvatar(child: Text(output['doctorName'])),
-                  title: Text(
-                    // output['doctorName'],
-                    book.doctorName, // using book model
-                    style: TextStyle(
-                        fontFamily: "OoohBaby",
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.red),
-                  ),
-                  subtitle: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.phone),
-                          Text(output['doctorPhone']),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Icon(Icons.category_sharp),
-                          Text(output['doctorType']),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Icon(Icons.access_time_rounded),
-                          Text(output['reviewDate']),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Icon(Icons.location_on),
-                          Text(output['doctorLocation']),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Icon(Icons.email),
-                          Text(output['doctorEmail']),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Icon(Icons.real_estate_agent_rounded),
-                          Text(output['reviewState']),
-                        ],
-                      ),
-                      Visibility(
-                        visible: permissionsProvider.showAddDoctor,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.edit),
-                              onPressed: () {
-                                showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return Dialog(
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(15)),
-                                        child: Container(
-                                          height: MediaQuery.of(context).size.height,
-                                          child: Column(
-                                            children: [
-                                              Expanded(
-                                                child: CupertinoDatePicker(
-                                                  mode: CupertinoDatePickerMode.dateAndTime,
-                                                  initialDateTime: DateTime.now(),
-                                                  onDateTimeChanged: (DateTime value) {
-                                                    setState(() {
-                                                      dateTime = value;
-                                                      print(dateTime);
-                                                    });
-                                                  },
-                                                ),
-                                              ),
-                                              IconButton(
-                                                  onPressed: () {
-                                                    // update data in firebase
-                                                    collection
-                                                        .doc(
-                                                            userID) // <-- Doc ID where data should be updated.
-                                                        .update({
-                                                          'reviewDate': dateTime.toString(),
-                                                          'reviewState':
-                                                              'تم قبول المراجعة وتم تحديد الموعد'
-                                                        }) // <-- Updated data
-                                                        .then((_) => myWidgets
-                                                            .showToast("تم التحديث الموعد بنجاح"))
-                                                        .catchError((error) =>
-                                                            print('Update failed: $error'));
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  icon: Icon(Icons.save))
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    });
-                              },
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.delete),
-                              onPressed: () {
-                                //TODO:
-                                collection
-                                    .doc(userID) // <-- Doc ID where data should be updated.
-                                    .delete() // <-- Updated data
-                                    .then((_) => myWidgets.showToast("تم حذف الموعد بنجاح"))
-                                    .catchError((error) => print('Update failed: $error'));
-                              },
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.done),
-                              onPressed: () {
-                                collection
-                                    .doc(userID) // <-- Doc ID where data should be updated.
-                                    .delete() // <-- Updated data
-                                    .then((_) => myWidgets.showToast("تم الانتهاء من الموعد بنجاح"))
-                                    .catchError((error) => print('Update failed: $error'));
-                              },
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
+            var book = BookModel.fromJson(output);
+            //   print(book.doctorId);
+
+            return Card(
+              child: ListTile(
+                isThreeLine: false,
+                leading: CircleAvatar(child: Text(output['doctorName'])),
+                title: Text(
+                  // output['doctorName'],
+                  book.doctorName, // using book model
+                  style: TextStyle(
+                      fontFamily: "OoohBaby",
+                      fontSize: 20.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red),
                 ),
-              );
-            } else if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            } else {
-              // must return circuleprogressindicator
-              return Center(child: Text("No result found"));
-            }
-          }),
-    );
+                subtitle: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.phone),
+                        Text(output['doctorPhone']),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(Icons.category_sharp),
+                        Text(output['doctorType']),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(Icons.access_time_rounded),
+                        Text(output['reviewDate']),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(Icons.location_on),
+                        Text(output['doctorLocation']),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(Icons.email),
+                        Text(output['doctorEmail']),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Icon(Icons.real_estate_agent_rounded),
+                        Text(output['reviewState']),
+                      ],
+                    ),
+                    Visibility(
+                      //-> just the doctor can delete and edit
+                      visible: permissionsProvider.showAddDoctor &&
+                          permissionsProvider.userId == output['doctorId'],
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.edit),
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    return Dialog(
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(15)),
+                                      child: Container(
+                                        height: MediaQuery.of(context).size.height,
+                                        child: Column(
+                                          children: [
+                                            Expanded(
+                                              child: CupertinoDatePicker(
+                                                mode: CupertinoDatePickerMode.dateAndTime,
+                                                initialDateTime: DateTime.now(),
+                                                onDateTimeChanged: (DateTime value) {
+                                                  setState(() {
+                                                    dateTime = value;
+                                                    print(dateTime);
+                                                  });
+                                                },
+                                              ),
+                                            ),
+                                            IconButton(
+                                                onPressed: () {
+                                                  // update data in firebase
+                                                  collection
+                                                      .doc(
+                                                          userID) // <-- Doc ID where data should be updated.
+                                                      .update({
+                                                        'reviewDate': dateTime.toString(),
+                                                        'reviewState':
+                                                            'تم قبول المراجعة وتم تحديد الموعد'
+                                                      }) // <-- Updated data
+                                                      .then((_) => myWidgets
+                                                          .showToast("تم التحديث الموعد بنجاح"))
+                                                      .catchError((error) =>
+                                                          print('Update failed: $error'));
+                                                  Navigator.of(context).pop();
+                                                },
+                                                icon: Icon(Icons.save))
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  });
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () {
+                              //TODO:
+                              collection
+                                  .doc(userID) // <-- Doc ID where data should be updated.
+                                  .delete() // <-- Updated data
+                                  .then((_) => myWidgets.showToast("تم حذف الموعد بنجاح"))
+                                  .catchError((error) => print('Update failed: $error'));
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.done),
+                            onPressed: () {
+                              collection
+                                  .doc(userID) // <-- Doc ID where data should be updated.
+                                  .delete() // <-- Updated data
+                                  .then((_) => myWidgets.showToast("تم الانتهاء من الموعد بنجاح"))
+                                  .catchError((error) => print('Update failed: $error'));
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () {
+                            //TODO:
+                            collection
+                                .doc(userID) // <-- Doc ID where data should be updated.
+                                .delete() // <-- Updated data
+                                .then((_) => myWidgets.showToast("تم حذف الموعد بنجاح"))
+                                .catchError((error) => print('Update failed: $error'));
+                          },
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            );
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            // must return circuleprogressindicator
+            return Center(child: Text("No result found"));
+          }
+        });
   }
 
 // we can use this widget when we use to get all data
-  Widget buildAppointments(BookModel bookModel) => Card(
-        child: ListTile(
-          leading: CircleAvatar(child: Text(bookModel.doctorName)),
-          title: Text(
-            bookModel.doctorName,
-            style: TextStyle(
-                fontFamily: "OoohBaby",
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-                color: Colors.red),
-          ),
-          subtitle: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(Icons.phone),
-                  Text(bookModel.doctorPhone),
-                ],
-              ),
-              Row(
-                children: [
-                  Icon(Icons.category_sharp),
-                  Text(bookModel.doctorType),
-                ],
-              ),
-              Row(
-                children: [
-                  Icon(Icons.access_time_rounded),
-                  Text(bookModel.openingTime),
-                ],
-              ),
-              Row(
-                children: [
-                  Icon(Icons.location_on),
-                  Text(bookModel.doctorLocation),
-                ],
-              ),
-              Row(
-                children: [
-                  Icon(Icons.email),
-                  Text(bookModel.doctorEmail),
-                ],
-              ),
-              Row(
-                children: [
-                  Icon(Icons.email),
-                  Text(bookModel.doctorEmail),
-                ],
-              )
-            ],
-          ),
+  Widget buildAppointmentsBasedOnDoctors() {
+    return StreamBuilder<List<BookModel>>(
+        stream: getAppointments(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(" حصل خطا ما ... "),
+            );
+          } else if (snapshot.hasData) {
+            final doctorAppointments = snapshot.data!;
+            if (doctorAppointments.isEmpty) {
+              return Center(
+                child: Text(
+                  "لا يوجد نتائج",
+                  style: TextStyle(color: Colors.blue, fontWeight: FontWeight.bold, fontSize: 20.0),
+                ),
+              );
+            } else {
+              return ListView(
+                children: doctorAppointments.map(buildAppointmentsDoctorChild).toList(),
+              );
+            }
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        });
+  }
+
+  Widget buildAppointmentsDoctorChild(BookModel bookModel) {
+    PermissionsProvider permissionsProvider =
+        Provider.of<PermissionsProvider>(context, listen: false);
+    return Card(
+      child: ListTile(
+        leading: CircleAvatar(child: Text(bookModel.patientName)),
+        title: Text(
+          bookModel.patientName,
+          style: TextStyle(
+              fontFamily: "OoohBaby",
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.red),
         ),
-      );
+        subtitle: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.phone),
+                Text(bookModel.patientPhone),
+              ],
+            ),
+            Row(
+              children: [
+                Icon(Icons.category_sharp),
+                Text(bookModel.doctorType),
+              ],
+            ),
+            Row(
+              children: [
+                Icon(Icons.access_time_rounded),
+                Text(bookModel.reviewDate),
+              ],
+            ),
+            Row(
+              children: [
+                Icon(Icons.location_on),
+                Text(bookModel.doctorLocation),
+              ],
+            ),
+            Row(
+              children: [
+                Icon(Icons.email),
+                Text(bookModel.patientEmail),
+              ],
+            ),
+            Row(
+              children: [
+                Icon(Icons.real_estate_agent_rounded),
+                Text(bookModel.reviewState),
+              ],
+            ),
+            Visibility(
+              //-> just the doctor can delete and edit
+
+              visible: permissionsProvider.showAddDoctor && userID == bookModel.doctorId,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    icon: Icon(Icons.edit),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            return Dialog(
+                              shape:
+                                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                              child: Container(
+                                height: MediaQuery.of(context).size.height,
+                                child: Column(
+                                  children: [
+                                    Expanded(
+                                      child: CupertinoDatePicker(
+                                        mode: CupertinoDatePickerMode.dateAndTime,
+                                        initialDateTime: DateTime.now(),
+                                        onDateTimeChanged: (DateTime value) {
+                                          setState(() {
+                                            dateTime = value;
+                                            print(dateTime);
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    IconButton(
+                                        onPressed: () {
+                                          // update data in firebase
+                                          collection
+                                              .doc(bookModel
+                                                  .patientId) // <-- Doc ID where data should be updated.
+                                              .update({
+                                                'reviewDate': dateTime.toString(),
+                                                'reviewState': 'تم قبول المراجعة وتم تحديد الموعد'
+                                              }) // <-- Updated data
+                                              .then((_) =>
+                                                  myWidgets.showToast("تم التحديث الموعد بنجاح"))
+                                              .catchError(
+                                                  (error) => print('Update failed: $error'));
+                                          Navigator.of(context).pop();
+                                        },
+                                        icon: Icon(Icons.save))
+                                  ],
+                                ),
+                              ),
+                            );
+                          });
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () {
+                      //TODO:
+                      collection
+                          .doc(bookModel.patientId) // <-- Doc ID where data should be updated.
+                          .delete() // <-- Updated data
+                          .then((_) => myWidgets.showToast("تم حذف الموعد بنجاح"))
+                          .catchError((error) => print('Update failed: $error'));
+                    },
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.done),
+                    onPressed: () {
+                      collection
+                          .doc(bookModel.patientId) // <-- Doc ID where data should be updated.
+                          .delete() // <-- Updated data
+                          .then((_) => myWidgets.showToast("تم الانتهاء من الموعد بنجاح"))
+                          .catchError((error) => print('Update failed: $error'));
+                    },
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+  //---------------------------------------------------------------------------
 } // end class
-// TODO: when getting data it shows error

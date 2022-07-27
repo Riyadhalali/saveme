@@ -112,7 +112,9 @@ class DrawePage extends StatelessWidget {
             onTap: () {
               //   Navigator.pushNamed(context, Voluntaries.id);
               MyWidgets mywidget = new MyWidgets();
-              mywidget.displaySnackMessage('الهلال الأحمر العربي السوري', context);
+              mywidget.showToast("Power By Yousef Skof");
+              mywidget.showToast("whatsapp: 0930191867");
+              mywidget.showToast("Gmail: yousef.zkah1998@gmail.com");
             },
           ),
           ListTile(
